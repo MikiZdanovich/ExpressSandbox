@@ -1,0 +1,11 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "import/prefer-default-export": 0,
+    "import/no-imoport-module-exports": 0,
+    "no-console": 0,
+    "semi": 0,
+    "import/named": 0,
+    "import/no-dynamic-require": 0
+  }
+}

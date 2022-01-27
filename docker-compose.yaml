@@ -1,0 +1,35 @@
+version: "1"
+services:
+  express_backend:
+    container_name: express_backend
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - EXTERNAL_PORT=8080
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=db
+      - PGHOST=postgres.host
+      - PORT=3000
+      - PGPORT=5432
+    ports:
+      - "3000:3000"
+    links:
+      - postgres:postgres.host
+    command: npm run migrate && npm run serve
+    volumes:
+      - .:/app
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+     volumes:
+       - ./data:/var/lib/postgresql/data
+
