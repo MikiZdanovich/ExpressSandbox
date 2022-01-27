@@ -17,7 +17,7 @@ services:
       - "3000:3000"
     links:
       - postgres:postgres.host
-    command: npm run migrate && npm run serve
+    command: npm run migrate && npm run seed  && npm run serve
     volumes:
       - .:/app
 
@@ -30,6 +30,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-     volumes:
-       - ./data:/var/lib/postgresql/data
+    volumes:
+      - ./data:/var/lib/postgresql/data
 

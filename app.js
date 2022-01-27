@@ -10,6 +10,7 @@ const createError = require('http-errors')
 
 const petRoutes = require('./backend/routes/pet')
 const config = require('./config/config')
+const db = require('./backend/db/models')
 
 const app = express()
 
@@ -65,12 +66,27 @@ app.use((err, req, res, next) => {
   res.render('error')
 })
 
+async function assertDatabaseConnectionOk () {
+  console.log('Checking database connection...')
+  try {
+    await db.sequelize.sync()
+    console.log('Database connection OK!')
+  } catch (error) {
+    console.log('Unable to connect to the database:')
+    console.log(error.message)
+    process.exit(1)
+  }
+}
+
 const server = {
   port: config.PORT,
-  start () {
+  async start () {
+    await assertDatabaseConnectionOk()
+
+    console.log(`Starting Sequelize + Express app on port ${this.port}...`)
+
     app.listen(this.port, () => console.log(`Server has been started on port:${this.port}...`))
   }
-
 }
 
 module.exports = server

@@ -4,9 +4,10 @@
   "description": "simple api for 'SDET' mastery purposes",
   "main": "index.js",
   "scripts": {
-    "serve:dev": "NODE_ENV=dev nodemon index.js",
-    "serve:prod": "NODE_ENV=prod nodemon index.js",
-    "migrate": "node backend/db/migrations/migrations.js"
+    "serve:dev": "ENV=dev nodemon index.js",
+    "serve": "ENV=test nodemon index.js",
+    "migrate": "ENV=dev npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "keywords": [
     "express"
