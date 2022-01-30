@@ -1,17 +1,19 @@
 const Service = require('../../backend/service/Service')
 const models = require('../../backend/db/models')
 
-const getPets = async () => {
-  try {
-    const listPets = await models.Pet.findAll()
-    Service.successResponse({ listPets }, 200)
-  } catch (e) {
-    Service.rejectResponse(
-      e.message || 'Failed to get Pets',
-      e.status || 404
-    )
+const getPets = () => new Promise(
+  async (resolve, reject) => {
+    try {
+      const listPets = await models.Pet.findAll()
+      resolve(Service.successResponse({ listPets }))
+    } catch (e) {
+      reject(Service.rejectResponse(
+        e.message || 'Invalid input',
+        e.status || 405
+      ))
+    }
   }
-}
+)
 const addPet = ({ body }) => new Promise(
   async (resolve, reject) => {
     try {

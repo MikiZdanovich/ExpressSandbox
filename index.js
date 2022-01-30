@@ -6,6 +6,7 @@ const launchServer = async () => {
   try {
     this.expressServer = new ExpressServer(config.PORT, config.OPENAPI_YAML)
 
+    await this.assertDatabaseConnectionOk()
     this.expressServer.launch()
     logger.info('Express server running')
   } catch (error) {

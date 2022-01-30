@@ -1,5 +1,5 @@
 const logger = require('../../logger')
-const controllers = require('../../gen/controllers')
+const controllers = require('../controllers')
 const Services = require('../service')
 
 function handleError (err, request, response, next) {
@@ -42,10 +42,10 @@ function openApiRouter () {
         next()
         return
       }
-      // request.swagger.paramValues = {};
+      // request.swagger.paramValues = {}
       // request.swagger.params.forEach((param) => {
-      //   request.swagger.paramValues[param.name] = getValueFromRequest(request, param);
-      // });
+      //   request.swagger.paramValues[param.name] = getValueFromRequest(request, param)
+      // })
       const controllerName = request.openapi.schema['x-openapi-router-controller']
       const serviceName = request.openapi.schema['x-openapi-router-service']
       if (!controllers[controllerName] || controllers[controllerName] === undefined) {

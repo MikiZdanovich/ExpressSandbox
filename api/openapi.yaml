@@ -51,26 +51,21 @@ paths:
       x-eov-operation-handler: controllers/PetController
   /pet:
     get:
-      tags:
-        - pet
-      summary: Get All Pets
       description: Retrieve list Pets
       operationId: getPets
       responses:
-        200:
-          description: Operation Succeed
+        "200":
           content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
             application/json:
               schema:
-                type: array
                 items:
                   $ref: '#/components/schemas/Pet'
-
+                type: array
+          description: Operation Succeed
+      summary: Get All Pets
+      tags:
+        - pet
+      x-eov-operation-handler: controllers/PetController
     post:
       operationId: addPet
       requestBody:

@@ -4,7 +4,7 @@ const Controller = require('../controllers/Controller')
 const service = require('../service/petService')
 
 const getPets = async (req, res) => {
-  await Controller.handleRequest(req, res, service.getPets())
+  await Controller.handleRequest(req, res, service.getPets)
 }
 
 const getPetsByTags = async (req, res) => {
