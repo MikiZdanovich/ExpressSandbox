@@ -1,3 +1,4 @@
+const path = require('path')
 const env = process.env.ENV || 'dev'
 
 const dev = {
@@ -8,8 +9,10 @@ const dev = {
   database: process.env.PGDATABASE || 'db',
   host: process.env.PGHOST || null,
   dialect: 'postgres',
-  port: process.env.PGPORT || 5432
-
+  pgPort: process.env.PGPORT || 5432,
+  ROOT_DIR: __dirname,
+  URL_PATH: 'http://localhost',
+  CONTROLLER_DIRECTORY: path.join(__dirname, 'backend', 'controllers')
 }
 
 const test = {
@@ -23,6 +26,8 @@ const test = {
   port: process.env.PGPORT
 
 }
+dev.OPENAPI_YAML = path.join(dev.ROOT_DIR, '..', 'api', 'openapi.yaml')
+dev.FILE_UPLOAD_PATH = path.join(dev.ROOT_DIR, '..', 'uploaded_files')
 
 const config = { dev, test }
 

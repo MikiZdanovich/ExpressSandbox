@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       category: {
-        type: Sequelize.INTEGER
+        type: Sequelize.JSONB
       },
       name: {
         type: Sequelize.STRING

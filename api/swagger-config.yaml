@@ -67,6 +67,27 @@ paths:
         - petstore_auth:
             - write:pets
             - read:pets
+    get:
+      tags:
+        - pet
+      summary: Get All Pets
+      description: Retrieve list Pets
+      operationId: getPets
+      responses:
+        200:
+          description: Operation Succeed
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+
   /pet/findByStatus:
     get:
       tags:

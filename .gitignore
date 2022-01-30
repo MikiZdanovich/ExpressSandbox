@@ -2,3 +2,5 @@
 node_modeles/
 .idea
 data/
+node_modules
+*.log
