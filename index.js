@@ -4,10 +4,12 @@ const ExpressServer = require('./app')
 
 const launchServer = async () => {
   try {
-    this.expressServer = new ExpressServer(config.PORT, config.OPENAPI_YAML)
+    const expressServer = new ExpressServer(config.PORT, config.OPENAPI_YAML)
 
-    await this.assertDatabaseConnectionOk()
-    this.expressServer.launch()
+    await expressServer.assertDatabaseConnectionOk()
+
+    await expressServer.launch()
+
     logger.info('Express server running')
   } catch (error) {
     logger.error('Express Server failure', error)

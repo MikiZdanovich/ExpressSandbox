@@ -12,7 +12,7 @@ const dev = {
   pgPort: process.env.PGPORT || 5432,
   ROOT_DIR: __dirname,
   URL_PATH: 'http://localhost',
-  CONTROLLER_DIRECTORY: path.join(__dirname, 'backend', 'controllers')
+  CONTROLLER_DIRECTORY: path.join(__dirname, 'src', 'controllers')
 }
 
 const test = {

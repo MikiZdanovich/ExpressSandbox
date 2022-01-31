@@ -66,6 +66,7 @@ paths:
       tags:
         - pet
       x-eov-operation-handler: controllers/PetController
+      x-eov-operation-id: getPets
     post:
       operationId: addPet
       requestBody:
@@ -79,7 +80,7 @@ paths:
         description: Pet object that needs to be added to the store
         required: true
       responses:
-        "405":
+        "400":
           content: { }
           description: Invalid input
       security:
@@ -122,51 +123,51 @@ paths:
         - pet
       x-codegen-request-body-name: body
       x-eov-operation-handler: controllers/PetController
-  /pet/findByStatus:
-    get:
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
-      parameters:
-        - description: Status values that need to be considered for filter
-          explode: true
-          in: query
-          name: status
-          required: true
-          schema:
-            items:
-              default: available
-              enum:
-                - available
-                - pending
-                - sold
-              type: string
-            type: array
-          style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-            application/xml:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Pet'
-                type: array
-          description: successful operation
-        "400":
-          content: { }
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-      summary: Finds Pets by status
-      tags:
-        - pet
-      x-eov-operation-handler: controllers/PetController
+  #  /pet/findByStatus:
+  #    get:
+  #      description: Multiple status values can be provided with comma separated strings
+  #      operationId: findPetsByStatus
+  #      parameters:
+  #        - description: Status values that need to be considered for filter
+  #          explode: true
+  #          in: query
+  #          name: status
+  #          required: true
+  #          schema:
+  #            items:
+  #              default: available
+  #              enum:
+  #                - available
+  #                - pending
+  #                - sold
+  #              type: string
+  #            type: array
+  #          style: form
+  #      responses:
+  #        "200":
+  #          content:
+  #            application/json:
+  #              schema:
+  #                items:
+  #                  $ref: '#/components/schemas/Pet'
+  #                type: array
+  #            application/xml:
+  #              schema:
+  #                items:
+  #                  $ref: '#/components/schemas/Pet'
+  #                type: array
+  #          description: successful operation
+  #        "400":
+  #          content: { }
+  #          description: Invalid status value
+  #      security:
+  #        - petstore_auth:
+  #            - write:pets
+  #            - read:pets
+  #      summary: Finds Pets by status
+  #      tags:
+  #        - pet
+  #      x-eov-operation-handler: controllers/PetController
   /pet/findByTags:
     get:
       deprecated: true

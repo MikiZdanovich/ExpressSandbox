@@ -1,5 +1,5 @@
-const Service = require('../../backend/service/Service')
-const models = require('../../backend/db/models')
+const Service = require('../service/Service')
+const models = require('../db/models')
 
 const getPets = () => new Promise(
   async (resolve, reject) => {
@@ -17,13 +17,14 @@ const getPets = () => new Promise(
 const addPet = ({ body }) => new Promise(
   async (resolve, reject) => {
     try {
+      const newPet = await models.Pet.create(body)
       resolve(Service.successResponse({
-        body
+        newPet
       }))
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
-        e.status || 405
+        e.status || 400
       ))
     }
   }
