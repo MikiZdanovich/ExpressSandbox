@@ -48,9 +48,22 @@ class ExpressServer {
     this.app.use(express.urlencoded({ extended: false }))
     this.app.use(cookieParser())
 
-    this.app.get('/openapi', (req, res) => res.sendFile((path.join(__dirname, 'api', 'openapi.yaml'))))
+    this.app.get('/openapi', (req, res) => res.sendFile(this.openApiPath))
     // View the openapi document in a visual interface. Should be able to test from this page
+
     this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema, swaggerJsDoc(this.swaggerOptions)))
+    this.app.use(
+      OpenApiValidator.middleware({
+        apiSpec: this.openApiPath,
+        operationHandlers: path.join(__dirname, 'src'),
+        fileUploader: { dest: config.FILE_UPLOAD_PATH },
+        validateRequests: true,
+        validateResponses: true,
+        validateApiSpec: true,
+        ignoreUndocumented: true
+      }
+      )
+    )
 
     // this.app.get('/login-redirect', (req, res) => {
     //   res.status(200)
@@ -63,23 +76,12 @@ class ExpressServer {
 
     this.app.use('/pet', petRoutes)
 
-    this.app.use(
-      OpenApiValidator.middleware({
-        apiSpec: this.openApiPath,
-        operationHandlers: path.join(__dirname, 'src', 'service'),
-        fileUploader: { dest: config.FILE_UPLOAD_PATH },
-        validateRequests: true,
-        validateResponses: true,
-        validateApiSpec: true
-      }
-      )
-    )
-    // this.app.use((err, req, res, next) => {
-    //   res.status(err.status || 500).json({
-    //     message: err.message || err,
-    //     errors: err.errors || ''
-    //   })
-    // })
+    this.app.use((err, req, res, next) => {
+      res.status(err.status || 500).json({
+        message: err.message || err,
+        errors: err.errors || ''
+      })
+    })
   }
 
   async launch () {

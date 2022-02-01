@@ -12,11 +12,13 @@ class Controller {
      * send 200 and the payload as received in this method.
      */
     response.status(payload.code || 200)
-    const responsePayload = payload.payload !== undefined ? payload.payload : payload
-    if (responsePayload instanceof Object) {
+
+    const responsePayload = payload.payload
+
+    if (responsePayload instanceof Object || responsePayload instanceof Array) {
       response.json(responsePayload)
     } else {
-      response.end(responsePayload)
+      response.end()
     }
   }
 
@@ -27,6 +29,7 @@ class Controller {
     } else {
       response.send(error.error || error.message).end()
     }
+    //  response.send(error)
   }
 
   /**

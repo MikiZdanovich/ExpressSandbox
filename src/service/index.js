@@ -1,4 +1,4 @@
-const PetService = require('./petService')
+const PetService = require('./PetService')
 
 module.exports = {
   PetService

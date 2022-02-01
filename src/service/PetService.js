@@ -1,11 +1,11 @@
-const Service = require('../service/Service')
+const Service = require('./Service')
 const models = require('../db/models')
 
 const getPets = () => new Promise(
   async (resolve, reject) => {
     try {
       const listPets = await models.Pet.findAll()
-      resolve(Service.successResponse({ listPets }))
+      resolve(Service.successResponse(listPets))
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',
@@ -18,9 +18,7 @@ const addPet = ({ body }) => new Promise(
   async (resolve, reject) => {
     try {
       const newPet = await models.Pet.create(body)
-      resolve(Service.successResponse({
-        newPet
-      }))
+      resolve(Service.successResponse())
     } catch (e) {
       reject(Service.rejectResponse(
         e.message || 'Invalid input',

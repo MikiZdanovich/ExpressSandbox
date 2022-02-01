@@ -3,7 +3,7 @@ env = process.env.NODE_ENV || 'dev'
 
 module.exports = {
   'config':          path.resolve( 'config', 'config.js')[env],
-  'migrations-path': path.resolve('backend', 'db', 'migrations'),
-  'models-path':     path.resolve('backend', 'db',  'models'),
-  'seeders-path':    path.resolve('backend', 'db',  'seeders'),
+  'migrations-path': path.resolve('src', 'db', 'migrations'),
+  'models-path':     path.resolve('src', 'db',  'models'),
+  'seeders-path':    path.resolve('src', 'db',  'seeders'),
 }
