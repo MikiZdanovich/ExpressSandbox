@@ -9,17 +9,6 @@ const deletePet = async (request, response) => {
   await Controller.handleRequest(request, response, service.deletePet)
 }
 
-const findPetsByTags = async (request, response) => {
-  await Controller.handleRequest(request, response, service.findPetsByTags)
-}
-
-const findPetsByStatus = async (request, response) => {
-  await Controller.handleRequest(request, response, service.findPetsByStatus)
-}
-const getPetById = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getPetById)
-}
-
 const getPets = async (request, response) => {
   await Controller.handleRequest(request, response, service.getPets)
 }
@@ -39,11 +28,11 @@ const uploadFile = async (request, response) => {
 module.exports = {
   addPet,
   deletePet,
-  findPetsByTags,
-  getPetById,
+  // findPetsByTags,
+  // getPetById,
   getPets,
   updatePet,
   updatePetWithForm,
-  uploadFile,
-  findPetsByStatus
+  uploadFile
+  // findPetsByStatus
 }

@@ -79,7 +79,7 @@ class ExpressServer {
     this.app.use((err, req, res, next) => {
       res.status(err.status || 500).json({
         message: err.message || err,
-        errors: err.errors || ''
+        errors: err.errors || 'Something goes wrong'
       })
     })
   }

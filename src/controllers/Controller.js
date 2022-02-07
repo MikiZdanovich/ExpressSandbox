@@ -1,22 +1,19 @@
 const fs = require('fs')
 const path = require('path')
-const camelCase = require('camelcase')
 const config = require('../../config/config')
 const logger = require('../../logger')
 
 class Controller {
   static sendResponse (response, payload) {
-    /**
-     * The default response-code is 200. We want to allow to change that. in That case,
-     * payload will be an object consisting of a code and a payload. If not customized
-     * send 200 and the payload as received in this method.
-     */
     response.status(payload.code || 200)
 
     const responsePayload = payload.payload
 
     if (responsePayload instanceof Object || responsePayload instanceof Array) {
+      responsePayload.status = payload.code
       response.json(responsePayload)
+    } else if (responsePayload) {
+      response.send(responsePayload)
     } else {
       response.end()
     }
@@ -29,7 +26,8 @@ class Controller {
     } else {
       response.send(error.error || error.message).end()
     }
-    //  response.send(error)
+
+    return error
   }
 
   /**
@@ -61,26 +59,41 @@ class Controller {
 
   static collectRequestParams (request) {
     const requestParams = {}
-    if (request.method === 'POST') {
-      if (request.body !== undefined) {
-        const content = request.headers
-
-        if (content['content-type'] === 'application/json') {
-          requestParams.body = request.body
-        } else if (content['content-type'] === 'multipart/form-data') {
-          Object.keys(content['multipart/form-data'].schema.properties).forEach(
-            (property) => {
-              const propertyObject = content['multipart/form-data'].schema.properties[property]
-              if (propertyObject.format !== undefined && propertyObject.format === 'binary') {
-                requestParams[property] = this.collectFile(request, property)
-              } else {
-                requestParams[property] = request.body[property]
-              }
-            }
-          )
-        }
-      }
+    const content = request.headers
+    if (Object.entries(request.query).length !== 0) {
+      Object.keys(request.query).forEach((property) => {
+        requestParams[property] = request.query[property]
+      })
     }
+    if (Object.entries(request.body).length !== 0) {
+      if (content['content-type'] === 'application/json') {
+        Object.keys(request.body).forEach((property) => {
+          requestParams[property] = request.body[property]
+        })
+      }
+    } else if (content['content-type'] === 'multipart/form-data') {
+      Object.keys(content['multipart/form-data'].schema.properties).forEach(
+        (property) => {
+          const propertyObject = content['multipart/form-data'].schema.properties[property]
+          if (propertyObject.format !== undefined && propertyObject.format === 'binary') {
+            requestParams[property] = this.collectFile(request, property)
+          } else {
+            requestParams[property] = request[property]
+          }
+        }
+      )
+    }
+
+    if (Object.entries(request.params).length !== 0) {
+      Object.keys(request.params).forEach((property) => {
+        requestParams[property] = request.params[property]
+      })
+    }
+    if (request.headers.id) {
+      requestParams.id = request.headers.id
+    }
+
+    removeEmpty(requestParams)
 
     return requestParams
   }
@@ -90,9 +103,18 @@ class Controller {
       const serviceResponse = await serviceOperation(this.collectRequestParams(request))
       Controller.sendResponse(response, serviceResponse)
     } catch (error) {
+      logger.error(error)
       Controller.sendError(response, error)
     }
   }
+}
+
+function removeEmpty (obj) {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, v]) => v != null & v !== '' & v !== undefined)
+      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
+  )
 }
 
 module.exports = Controller
