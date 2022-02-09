@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   })
   // Pet.associate = (models) => {
-  //   Pet.belongsTo(models.Order, { foreignKey: 'id', as: 'petId' })
+  //   Pet.hasMany(models.Image)
   // }
   return Pet
 }

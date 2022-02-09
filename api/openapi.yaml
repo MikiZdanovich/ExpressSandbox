@@ -44,6 +44,12 @@ paths:
                   $ref: '#/components/schemas/Pet'
                 type: array
           description: Operation Succeed
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: 'Operation failed'
       summary: Get All Pets
       tags:
         - pet
@@ -89,7 +95,7 @@ paths:
           style: simple
         - description: Pet id to delete
           explode: true
-          in: query
+          in: header
           name: id
           required: true
           schema:
@@ -100,8 +106,11 @@ paths:
           content: { }
           description: Pet destroyed
         "400":
-          content: { }
-          description: Invalid ID sipplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: 'Operation failed'
       security:
         - petstore_auth:
             - write:pets
@@ -156,7 +165,7 @@ paths:
       parameters:
         - description: ID of pet to update
           explode: false
-          in: query
+          in: header
           name: id
           required: true
           schema:
@@ -166,21 +175,29 @@ paths:
         content:
           multipart/form-data:
             schema:
+              type: object
               properties:
-                additionalMetadata:
-                  description: Additional data to pass to server
-                  type: string
                 file:
+                  type: string
                   description: file to upload
                   format: binary
+                name:
                   type: string
+                  description: name of image
+            encoding:
+              file:
+                contentType: image/png, image/jpeg
       responses:
         "200":
           content:
+            { }
+          description: successful operation
+        "405":
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
-          description: successful operation
+                $ref: '#/components/schemas/Error'
+          description: 'Operation failed'
       security:
         - petstore_auth:
             - write:pets
@@ -189,6 +206,7 @@ paths:
       tags:
         - pet
       x-eov-operation-handler: controllers/PetController
+      x-eov-operation-id: uploadPetImage
   /store/order:
     post:
       operationId: placeOrder
@@ -513,20 +531,19 @@ paths:
       x-eov-operation-handler: controllers/UserController
 components:
   schemas:
-    ApiResponse:
+    Error:
       example:
-        code: 0
-        type: type
-        message: message
+        code: 400
+        message: 'Bad request'
+        errors: 'Bad request'
+      type: object
       properties:
         code:
-          format: int32
           type: integer
-        type:
-          type: string
         message:
           type: string
-      type: object
+        errors:
+          description: Errors object
     Category:
       example:
         name: name

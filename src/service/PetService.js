@@ -1,10 +1,12 @@
 const Service = require('./Service')
 const models = require('../db/models')
+const { setGetPetsParams, setPostPetParams, setPetIdFromHeaders, setUploadFilePayload } = require('../utils/petUtil')
 
 async function getPets (request) {
   try {
+    const params = setGetPetsParams(request)
     const listPets = await models.Pet.findAll({
-      where: request
+      where: params
     })
 
     return Service.successResponse(listPets)
@@ -18,7 +20,8 @@ async function getPets (request) {
 
 async function addPet (request) {
   try {
-    const newPet = await models.Pet.create(request)
+    const payload = setPostPetParams(request)
+    const newPet = await models.Pet.create(payload)
     return Service.successResponse(`Pet with id:${newPet.id} was created`, 201)
   } catch (e) {
     return Service.rejectResponse(
@@ -30,8 +33,9 @@ async function addPet (request) {
 
 async function deletePet (request) {
   try {
+    const petId = setPetIdFromHeaders(request)
     await models.Pet.destroy({
-      where: request
+      where: petId
     })
     return Service.successResponse(null, 204)
   } catch (e) {
@@ -40,18 +44,12 @@ async function deletePet (request) {
   }
 }
 
-/**
- * Update an existing pet
- *
- * body Pet Pet object that needs to be added to the store
- * no response value expected for this operation
- * */
 async function updatePet (request) {
   try {
-    models.Pet.update(request.body, {
-      where: {
-        request
-      }
+    const payload = setPostPetParams(request)
+    const id = setPetIdFromHeaders(request)
+    models.Pet.update(payload, {
+      where: id
     })
     return Service.successResponse(null, 204)
   } catch (e) {
@@ -61,60 +59,27 @@ async function updatePet (request) {
   }
 }
 
-/**
- * Updates a pet in the store with form data
- *
- * petId Long ID of pet that needs to be updated
- * name String Updated name of the pet (optional)
- * status String Updated status of the pet (optional)
- * no response value expected for this operation
- * */
-const updatePetWithForm = ({ petId, name, status }) => new Promise(
-  async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({
-        petId,
-        name,
-        status
-      }))
-    } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405
-      ))
+async function uploadFile (request) {
+  const { payload, id } = setUploadFilePayload(request)
+  try {
+    for (const item of payload) {
+      await models.Image.create(item, {
+        where: id
+      })
     }
+    return Service.successResponse(null, 204)
+  } catch (e) {
+    Service.rejectResponse(
+      e.message || 'Invalid input',
+      e.status || 405)
   }
-)
-/**
- * uploads an image
- *
- * petId Long ID of pet to update
- * additionalMetadata String Additional data to pass to server (optional)
- * file File file to upload (optional)
- * returns ApiResponse
- * */
-const uploadFile = ({ petId, additionalMetadata, file }) => new Promise(
-  async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({
-        petId,
-        additionalMetadata,
-        file
-      }))
-    } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405
-      ))
-    }
-  }
-)
+}
 
 module.exports = {
+  getPets,
   addPet,
   deletePet,
   updatePet,
-  updatePetWithForm,
-  uploadFile,
-  getPets
+  uploadFile
+
 }

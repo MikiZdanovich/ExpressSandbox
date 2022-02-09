@@ -3,17 +3,18 @@ const {
   addPet,
   getPets,
   updatePet,
-  deletePet
-
+  deletePet,
+  uploadPetImage
 } = require('../controllers/PetController')
 
 const router = Router()
 
-router.get('/', getPets)
+router.get('/:status', getPets)
 
 router.post('/', addPet)
 
 router.put('/', updatePet)
 
-router.delete('/:petId', deletePet)
+router.delete('/', deletePet)
+
 module.exports = router

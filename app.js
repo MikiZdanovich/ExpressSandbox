@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const swaggerUI = require('swagger-ui-express')
 const http = require('http')
+const createError = require('http-errors')
 const OpenApiValidator = require('express-openapi-validator')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
@@ -9,6 +10,7 @@ const jsYaml = require('js-yaml')
 const cors = require('cors')
 const fs = require('fs')
 const swaggerJsDoc = require('swagger-jsdoc')
+const multer = require('multer')
 const config = require('./config/config')
 const db = require('./src/db/models')
 const logger = require('./logger')
@@ -32,6 +34,13 @@ class ExpressServer {
       },
       apis: ['index.js']
     }
+    this.upload = multer({
+      dest: config.FILE_UPLOAD_PATH,
+      limits: {
+        fieldSize: 1024 * 512,
+        fieldNameSize: 200
+      }
+    })
     try {
       this.schema = jsYaml.safeLoad(fs.readFileSync(this.openApiPath))
     } catch (e) {
@@ -49,7 +58,6 @@ class ExpressServer {
     this.app.use(cookieParser())
 
     this.app.get('/openapi', (req, res) => res.sendFile(this.openApiPath))
-    // View the openapi document in a visual interface. Should be able to test from this page
 
     this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema, swaggerJsDoc(this.swaggerOptions)))
     this.app.use(
@@ -73,12 +81,15 @@ class ExpressServer {
     //   res.status(200)
     //   res.json(req.query)
     // })
-
+    this.app.use(this.upload.any())
     this.app.use('/pet', petRoutes)
 
     this.app.use((err, req, res, next) => {
+      const httpError = createError(err.status || 500)
+      logger.error(err)
       res.status(err.status || 500).json({
-        message: err.message || err,
+        code: err.status || 500,
+        message: httpError.message || 'Bad request',
         errors: err.errors || 'Something goes wrong'
       })
     })
@@ -87,17 +98,16 @@ class ExpressServer {
   async launch () {
     http.createServer(this.app).listen(this.port)
 
-    console.log(`Listening on port ${this.port}`)
+    logger.info(`Listening on port ${this.port}`)
   }
 
   async assertDatabaseConnectionOk () {
-    console.log('Checking database connection...')
+    logger.info('Checking database connection...')
     try {
       await db.sequelize.sync()
-      console.log('Database connection OK!')
+      logger.info('Database connection OK!')
     } catch (error) {
-      console.log('Unable to connect to the database:')
-      console.log(error)
+      logger.error(`Unable to connect to DB. ${error.message}`)
       process.exit(1)
     }
   }
@@ -105,7 +115,7 @@ class ExpressServer {
   async close () {
     if (this.server !== undefined) {
       await this.server.close()
-      console.log(`Server on port ${this.port} shut down`)
+      logger.info(`Server on port ${this.port} shut down`)
     }
   }
 }

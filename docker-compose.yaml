@@ -1,4 +1,4 @@
-version: "1"
+version: "3.8"
 services:
   express_backend:
     container_name: express_backend
@@ -17,7 +17,7 @@ services:
       - "3000:3000"
     links:
       - postgres:postgres.host
-    command: npm run migrate && npm run seed  && npm run serve
+    command: npm run serve
     volumes:
       - .:/app
 

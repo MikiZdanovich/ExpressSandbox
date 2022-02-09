@@ -28,7 +28,7 @@ const test = {
 }
 dev.OPENAPI_YAML = path.join(dev.ROOT_DIR, '..', 'api', 'openapi.yaml')
 dev.FILE_UPLOAD_PATH = path.join(dev.ROOT_DIR, '..', 'uploaded_files')
-
+dev.fileLimits = { fileSize: 50 * 1024 * 1024 }
 const config = { dev, test }
 
 module.exports = config[env]
