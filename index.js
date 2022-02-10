@@ -4,7 +4,7 @@ const ExpressServer = require('./app')
 
 const launchServer = async () => {
   try {
-    const expressServer = new ExpressServer(config.PORT, config.OPENAPI_YAML)
+    const expressServer = new ExpressServer(config)
 
     await expressServer.assertDatabaseConnectionOk()
 

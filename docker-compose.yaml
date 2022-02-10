@@ -2,7 +2,10 @@ version: "3.8"
 services:
   express_backend:
     container_name: express_backend
-    build: .
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
     depends_on:
       - postgres
     environment:
@@ -20,7 +23,6 @@ services:
     command: npm run serve
     volumes:
       - .:/app
-
   postgres:
     container_name: postgres
     image: postgres
@@ -32,4 +34,13 @@ services:
       POSTGRES_DB: db
     volumes:
       - ./data:/var/lib/postgresql/data
-
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - express_backend
+    links:
+      - express_backend

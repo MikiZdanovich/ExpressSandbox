@@ -5,5 +5,3 @@ function isNotEmpty (item) {
 }
 
 module.exports = { isNotEmpty }
-
-console.log(isNotEmpty({ a: '' }))

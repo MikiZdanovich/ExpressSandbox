@@ -1,6 +1,4 @@
 const { isNotEmpty } = require('./common')
-const config = require('../../config/config')
-const path = require('path')
 const logger = require('../../logger')
 const fs = require('fs')
 
@@ -31,13 +29,13 @@ function setPostPetParams (request) {
 function setUploadFilePayload (request) {
   const id = setPetIdFromHeaders(request)
   const payload = []
-
+  const filename = request.body.filename || null
   if (request.files || Object.keys(request.files).length !== 0) {
     request.files.forEach((file) => {
       try {
-        const fileData = fs.readFileSync(file.path)
+        const fileData = fs.readFileSync(file.path, 'base64')
         payload.push({
-          filename: file.originalname,
+          filename: filename || file.originalname,
           type: file.mimetype,
           data: fileData
         })

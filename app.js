@@ -1,51 +1,23 @@
 const express = require('express')
-const path = require('path')
-const swaggerUI = require('swagger-ui-express')
 const http = require('http')
-const createError = require('http-errors')
-const OpenApiValidator = require('express-openapi-validator')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const jsYaml = require('js-yaml')
 const cors = require('cors')
-const fs = require('fs')
-const swaggerJsDoc = require('swagger-jsdoc')
 const multer = require('multer')
-const config = require('./config/config')
 const db = require('./src/db/models')
 const logger = require('./logger')
 const petRoutes = require('./src/routes/petRoutes')
+const SwaggerMiddleware = require('./src/middleware/swagger')
+const ErrorParser = require('./src/middleware/errors')
 
 class ExpressServer {
-  constructor (port, openApiYaml) {
-    this.port = port
+  constructor (config) {
+    this.port = config.PORT
     this.app = express()
-    this.openApiPath = openApiYaml
-    this.swaggerOptions = {
-      swaggerDefinition: {
-        info: {
-          title: 'SDET API',
-          description: 'SDET API Sandbox',
-          contact: {
-            name: 'mik-zdanovich@godeltech.com'
-          },
-          servers: [`http://localhost:${config.PORT}`]
-        }
-      },
-      apis: ['index.js']
-    }
-    this.upload = multer({
-      dest: config.FILE_UPLOAD_PATH,
-      limits: {
-        fieldSize: 1024 * 512,
-        fieldNameSize: 200
-      }
-    })
-    try {
-      this.schema = jsYaml.safeLoad(fs.readFileSync(this.openApiPath))
-    } catch (e) {
-      logger.error('failed to load openApi schema', e.message)
-    }
+    this.swagger = new SwaggerMiddleware(this.app)
+    this.errorFormater = new ErrorParser(this.app)
+    this.upload = multer(config.MulterOptions)
+
     this.SetupMiddleware()
   }
 
@@ -56,43 +28,12 @@ class ExpressServer {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: false }))
     this.app.use(cookieParser())
-
-    this.app.get('/openapi', (req, res) => res.sendFile(this.openApiPath))
-
-    this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema, swaggerJsDoc(this.swaggerOptions)))
-    this.app.use(
-      OpenApiValidator.middleware({
-        apiSpec: this.openApiPath,
-        operationHandlers: path.join(__dirname, 'src'),
-        fileUploader: { dest: config.FILE_UPLOAD_PATH },
-        validateRequests: true,
-        validateResponses: true,
-        validateApiSpec: true,
-        ignoreUndocumented: true
-      }
-      )
-    )
-
-    // this.app.get('/login-redirect', (req, res) => {
-    //   res.status(200)
-    //   res.json(req.query)
-    // })
-    // this.app.get('/oauth2-redirect.html', (req, res) => {
-    //   res.status(200)
-    //   res.json(req.query)
-    // })
     this.app.use(this.upload.any())
-    this.app.use('/pet', petRoutes)
 
-    this.app.use((err, req, res, next) => {
-      const httpError = createError(err.status || 500)
-      logger.error(err)
-      res.status(err.status || 500).json({
-        code: err.status || 500,
-        message: httpError.message || 'Bad request',
-        errors: err.errors || 'Something goes wrong'
-      })
-    })
+    this.swagger.init()
+    this.errorFormater.init()
+
+    this.app.use('/pet', petRoutes)
   }
 
   async launch () {

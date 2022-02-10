@@ -3,32 +3,23 @@ const env = process.env.ENV || 'dev'
 
 const dev = {
   PORT: process.env.PORT || 3000,
-
+  URL_PATH: process.env.URL || 'http://localhost',
   username: process.env.PGUSERNAME || 'postgres',
   password: process.env.PGPASSWORD || 'postgres',
   database: process.env.PGDATABASE || 'db',
   host: process.env.PGHOST || null,
   dialect: 'postgres',
   pgPort: process.env.PGPORT || 5432,
-  ROOT_DIR: __dirname,
-  URL_PATH: 'http://localhost',
-  CONTROLLER_DIRECTORY: path.join(__dirname, 'src', 'controllers')
+  FILE_UPLOAD_PATH: path.join(__dirname, '..', 'uploaded_files'),
+  MulterOptions: {
+    dest: this.FILE_UPLOAD_PATH,
+    fileLimits: {
+      fieldSize: 1024 * 1024,
+      fieldNameSize: 200
+    }
+  }
 }
 
-const test = {
-  PORT: process.env.PORT,
-
-  username: process.env.PGUSERNAME,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-  host: process.env.PGHOST,
-  dialect: 'postgres',
-  port: process.env.PGPORT
-
-}
-dev.OPENAPI_YAML = path.join(dev.ROOT_DIR, '..', 'api', 'openapi.yaml')
-dev.FILE_UPLOAD_PATH = path.join(dev.ROOT_DIR, '..', 'uploaded_files')
-dev.fileLimits = { fileSize: 50 * 1024 * 1024 }
-const config = { dev, test }
+const config = { dev }
 
 module.exports = config[env]

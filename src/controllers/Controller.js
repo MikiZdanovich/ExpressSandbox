@@ -33,6 +33,7 @@ class Controller {
   static async handleRequest (request, response, serviceOperation) {
     try {
       const serviceResponse = await serviceOperation(request)
+      logger.info(serviceResponse)
       Controller.sendResponse(response, serviceResponse)
     } catch (error) {
       logger.error(error)

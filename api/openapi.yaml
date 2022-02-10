@@ -1,10 +1,10 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   contact:
     email: mikita.zdanovich@godeltech.com
   description: SDET MASTERY SANDBOX
   title: Godel Petstore
-  version: 1.0.0
+  version: 1.0.3
 servers:
   - url: http://localhost:3000
   - url: https://petstore.godel
@@ -20,12 +20,13 @@ paths:
           required: false
           schema:
             items:
-              default: available
+              default: null
               enum:
                 - available
                 - pending
                 - sold
               type: string
+              nullable: true
             type: array
           style: form
         - description: ID of pet to return
@@ -72,7 +73,10 @@ paths:
           content: { }
           description: Pet Created Successfully
         "400":
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
           description: Invalid input
       security:
         - petstore_auth:
@@ -135,20 +139,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
         description: Pet object that needs to be added to the store
         required: true
       responses:
         "400":
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Invalid ID supplied
         "404":
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
           description: Pet not found
         "405":
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
           description: Validation exception
       security:
         - petstore_auth:
@@ -181,7 +191,7 @@ paths:
                   type: string
                   description: file to upload
                   format: binary
-                name:
+                filename:
                   type: string
                   description: name of image
             encoding:
