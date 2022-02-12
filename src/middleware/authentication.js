@@ -14,10 +14,6 @@ const authenticateJWT = (req, res, next) => {
       const verified = jwt.verify(token, secrets.accessTokenSecret)
       req.user = verified
       next()
-      // jwt.verify(token, secrets.accessTokenSecret, (err, user) => {
-      //   req.user = user
-      //   next()
-      // })
     } catch (e) {
       return Controller.sendError(res, { code: 400, error: { name: e.name, message: e.message } })
     }

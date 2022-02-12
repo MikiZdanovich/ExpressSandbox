@@ -14,7 +14,7 @@ async function createUser (request) {
     return Service.successResponse(null, 200)
   } catch (e) {
     return Service.rejectResponse(
-      e.message || 'Invalid input',
+      { message: e.message, errors: e.errors } || 'Invalid input',
       e.status || 405
     )
   }

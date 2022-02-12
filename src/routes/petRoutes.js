@@ -19,4 +19,5 @@ router.put('/', updatePet)
 router.delete('/', deletePet)
 
 router.post('/uploadImage', uploadPetImage)
+
 module.exports = router
