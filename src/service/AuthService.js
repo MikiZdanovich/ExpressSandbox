@@ -13,26 +13,32 @@ async function loginUser (request) {
       username: username
     }
   })
-  const passwordIsValid = bcrypt.compareSync(password, user.password)
 
-  if (user && passwordIsValid) {
-    const accessToken = jwt.sign({
-      id: user.id,
-      name: user.name
-    }, secrets.accessTokenSecret, { expiresIn: '1800s' })
-
-    const refreshToken = jwt.sign({
-      id: user.id,
-      name: user.name
-    }, secrets.refreshTokenSecret, { expiresIn: '3600s' })
-
-    return Service.successResponse({
-      accessToken: accessToken,
-      refreshToken: refreshToken
-    }, 200)
-  } else {
-    return Service.rejectResponse('Username or password incorrect',
+  if (!user) {
+    return Service.rejectResponse({ message: 'Username is incorrect' },
       404)
+  } else {
+    const passwordIsValid = bcrypt.compareSync(password, user.password)
+
+    if (!passwordIsValid) {
+      return Service.rejectResponse({ message: 'Password is incorrect' },
+        404)
+    } else {
+      const accessToken = jwt.sign({
+        id: user.id,
+        name: user.name
+      }, secrets.accessTokenSecret, { expiresIn: '1800s' })
+
+      const refreshToken = jwt.sign({
+        id: user.id,
+        name: user.name
+      }, secrets.refreshTokenSecret, { expiresIn: '3600s' })
+
+      return Service.successResponse({
+        accessToken: accessToken,
+        refreshToken: refreshToken
+      }, 200)
+    }
   }
 }
 

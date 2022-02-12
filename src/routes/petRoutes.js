@@ -10,7 +10,7 @@ const {
 
 const router = Router()
 
-router.get('/:status', getPets)
+router.get('/', getPets)
 
 router.post('/', addPet)
 

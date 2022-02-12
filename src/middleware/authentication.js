@@ -15,7 +15,7 @@ const authenticateJWT = (req, res, next) => {
       req.user = verified
       next()
     } catch (e) {
-      return Controller.sendError(res, { code: 400, error: { name: e.name, message: e.message } })
+      return Controller.sendError(res, { code: 400, error: { name: e.name, message: e.message || 'Unauthorised' } })
     }
   }
 }

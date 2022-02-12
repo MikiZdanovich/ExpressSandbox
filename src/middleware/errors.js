@@ -9,9 +9,9 @@ class ErrorFormatter {
     this.app.use((err, req, res, next) => {
       logger.error(err)
       res.status(err.status || err.code || 500).json({
-        code: err.status || 500,
-        message: err.message || 'Bad request',
-        errors: err.errors || err.message || 'Something goes wrong'
+        code: err.status || err.code || 500,
+        message: err.name || err.error.name || 'Bad request',
+        errors: err.errors || err.error.message || 'Something goes wrong'
       })
     })
   }

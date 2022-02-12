@@ -630,14 +630,22 @@ components:
       properties:
         username:
           type: string
+          nullable: false
+          minLength: 1
         firstname:
           type: string
+          nullable: false
+          minLength: 1
         lastname:
           type: string
+          nullable: false
+          minLength: 1
         email:
           type: string
         password:
           type: string
+          nullable: false
+          minLength: 1
         phone:
           type: string
       required: [ username, firstname, lastname, password ]
@@ -650,5 +658,5 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-#security:
-#  - bearerAuth: [ ]
+security:
+  - bearerAuth: [ ]

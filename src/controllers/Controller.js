@@ -1,7 +1,5 @@
 const logger = require('../../logger')
 
-const createError = require('http-errors')
-
 class Controller {
   static sendResponse (response, payload) {
     response.status(payload.code || 200)
@@ -18,16 +16,12 @@ class Controller {
     }
   }
 
-  static sendError (response, error) {
-    const httpError = createError(error.status || error.code || 500)
-
-    response.status(error.code || 500).json({
-      code: error.code || 500,
-      message: httpError.message || 'Bad request',
-      errors: error.error || 'Something goes wrong'
+  static sendError (res, err) {
+    res.status(err.status || err.code || 500).json({
+      code: err.status || err.code || 500,
+      message: err.name || err.error.name || 'Bad request',
+      errors: err.errors || err.error.message || 'Something goes wrong'
     })
-
-    return error
   }
 
   static async handleRequest (request, response, serviceOperation) {
