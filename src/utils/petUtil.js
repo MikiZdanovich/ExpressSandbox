@@ -1,4 +1,4 @@
-const { isNotEmpty } = require('./common')
+const { isNotEmpty } = require('./commonUtils')
 const logger = require('../../logger')
 const fs = require('fs')
 
@@ -41,6 +41,7 @@ function setUploadFilePayload (request) {
         })
       } catch (e) {
         logger.error(e)
+        throw e
       }
     })
     return { payload, id }

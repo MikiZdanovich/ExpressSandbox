@@ -1,4 +1,3 @@
-const createError = require('http-errors')
 const logger = require('../../logger')
 
 class ErrorFormatter {
@@ -8,12 +7,11 @@ class ErrorFormatter {
 
   init () {
     this.app.use((err, req, res, next) => {
-      const httpError = createError(err.status || 500)
       logger.error(err)
-      res.status(err.status || 500).json({
+      res.status(err.status || err.code || 500).json({
         code: err.status || 500,
-        message: httpError.message || 'Bad request',
-        errors: err.errors || 'Something goes wrong'
+        message: err.message || 'Bad request',
+        errors: err.errors || err.message || 'Something goes wrong'
       })
     })
   }

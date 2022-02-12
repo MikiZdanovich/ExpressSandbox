@@ -6,9 +6,12 @@ const cors = require('cors')
 const multer = require('multer')
 const db = require('./src/db/models')
 const logger = require('./logger')
-const petRoutes = require('./src/routes/petRoutes')
 const SwaggerMiddleware = require('./src/middleware/swagger')
 const ErrorParser = require('./src/middleware/errors')
+const verifyToken = require('./src/middleware/authentication')
+const petRoutes = require('./src/routes/petRoutes')
+const authRoutes = require('./src/routes/authRoutes')
+const userRoutes = require('./src/routes/userRoutes')
 
 class ExpressServer {
   constructor (config) {
@@ -29,11 +32,11 @@ class ExpressServer {
     this.app.use(express.urlencoded({ extended: false }))
     this.app.use(cookieParser())
     this.app.use(this.upload.any())
-
     this.swagger.init()
     this.errorFormater.init()
-
-    this.app.use('/pet', petRoutes)
+    this.app.use('/pet', verifyToken, petRoutes)
+    this.app.use('/login', authRoutes)
+    this.app.use('/user', userRoutes)
   }
 
   async launch () {

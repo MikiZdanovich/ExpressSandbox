@@ -19,7 +19,7 @@ class Controller {
   }
 
   static sendError (response, error) {
-    const httpError = createError(error.status || 500)
+    const httpError = createError(error.status || error.code || 500)
 
     response.status(error.code || 500).json({
       code: error.code || 500,

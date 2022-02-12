@@ -18,7 +18,7 @@ const swaggerConfig = {
   },
   VALIDATOR_OPTIONS: {
     apiSpec: path.join(__dirname, '..', 'api', 'openapi.yaml'),
-    operationHandlers: path.join(__dirname, '..', 'src'),
+    // operationHandlers: path.join(__dirname, '..', 'src'),
     // fileUploader: { dest: config.FILE_UPLOAD_PATH },
     validateRequests: true,
     validateResponses: true,
