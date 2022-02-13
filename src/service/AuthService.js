@@ -1,45 +1,42 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-const { setLoginParams } = require('../utils/authUtils')
-const models = require('../db/models')
+const redisService = require('./redisService')
+const logger = require('../utils/logger')
 const Service = require('./Service')
+const JwtService = require('./jwtService')
 const secrets = require('../../config/secrets')
+const tokenUtils = require('../utils/authUtils')
+const jwtService = new JwtService(secrets)
 
 async function loginUser (request) {
-  const { username, password } = setLoginParams(request)
+  const user = await tokenUtils.verifyUser(request)
 
-  const user = await models.User.findOne({
-    where: {
-      username: username
-    }
-  })
+  const { accessToken, refreshToken } = jwtService.generate(user.id, user.email)
 
-  if (!user) {
-    return Service.rejectResponse({ message: 'Username is incorrect' },
-      404)
-  } else {
-    const passwordIsValid = bcrypt.compareSync(password, user.password)
+  return Service.successResponse({
+    accessToken: accessToken,
+    refreshToken: refreshToken
+  }, 200)
+}
 
-    if (!passwordIsValid) {
-      return Service.rejectResponse({ message: 'Password is incorrect' },
-        404)
-    } else {
-      const accessToken = jwt.sign({
-        id: user.id,
-        name: user.name
-      }, secrets.accessTokenSecret, { expiresIn: '1800s' })
+async function refreshToken (request) {
+  try {
+    const token = await tokenUtils.verifyToken(request)
 
-      const refreshToken = jwt.sign({
-        id: user.id,
-        name: user.name
-      }, secrets.refreshTokenSecret, { expiresIn: '3600s' })
+    await redisService.set(
+      {
+        key: token,
+        value: '1',
+        timeType: 'EX',
+        time: secrets.jwtRefreshTime
+      }
+    )
 
-      return Service.successResponse({
-        accessToken: accessToken,
-        refreshToken: refreshToken
-      }, 200)
-    }
+    const user = tokenUtils.verifyUser(request)
+    jwtService.generate(user.id, user.name)
+  } catch (e) {
+    logger.error(e)
+    e.code = 401
+    throw e
   }
 }
 
-module.exports = { loginUser }
+module.exports = { loginUser, refreshToken }

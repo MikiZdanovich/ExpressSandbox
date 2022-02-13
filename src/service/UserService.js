@@ -1,4 +1,4 @@
-const logger = require('../../logger')
+const logger = require('../utils/logger')
 const Service = require('./Service')
 const { setUserParams } = require('../utils/userUtils')
 

@@ -1,5 +1,5 @@
 const { isNotEmpty } = require('./commonUtils')
-const logger = require('../../logger')
+const logger = require('./logger')
 const fs = require('fs')
 
 function setPetIdFromHeaders (request) {

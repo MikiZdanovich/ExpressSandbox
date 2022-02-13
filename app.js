@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const multer = require('multer')
 const db = require('./src/db/models')
-const logger = require('./logger')
+const logger = require('./src/utils/logger')
 const SwaggerMiddleware = require('./src/middleware/swagger')
 const ErrorParser = require('./src/middleware/errors')
 const authenticateJWT = require('./src/middleware/authentication')
@@ -13,8 +13,11 @@ const petRoutes = require('./src/routes/petRoutes')
 const authRoutes = require('./src/routes/authRoutes')
 const userRoutes = require('./src/routes/userRoutes')
 
+const Redis = require('./src/service/redisService')
+
 class ExpressServer {
   constructor (config) {
+    this.redisServer = new Redis()
     this.port = config.PORT
     this.app = express()
     this.swagger = new SwaggerMiddleware(this.app)
@@ -41,7 +44,7 @@ class ExpressServer {
 
   async launch () {
     http.createServer(this.app).listen(this.port)
-
+    this.redisServer.start()
     logger.info(`Listening on port ${this.port}`)
   }
 
@@ -57,8 +60,9 @@ class ExpressServer {
   }
 
   async close () {
-    if (this.server !== undefined) {
-      await this.server.close()
+    if (this.app !== undefined) {
+      await this.app.close()
+      await this.redisServer.exit()
       logger.info(`Server on port ${this.port} shut down`)
     }
   }

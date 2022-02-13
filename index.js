@@ -1,5 +1,5 @@
 const config = require('./config/config')
-const logger = require('./logger')
+const logger = require('./src/utils/logger')
 const ExpressServer = require('./app')
 
 const launchServer = async () => {

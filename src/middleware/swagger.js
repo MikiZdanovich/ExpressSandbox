@@ -4,7 +4,7 @@ const jsYaml = require('js-yaml')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerConfig = require('../../config/swagger')
 const fs = require('fs')
-const logger = require('../../logger')
+const logger = require('../utils/logger')
 
 class SwaggerMiddleware {
   constructor (app) {
