@@ -621,8 +621,8 @@ components:
         name: Order
     User:
       example:
-        firstname: firstName
-        lastname: lastName
+        firstname: firstname
+        lastname: lastname
         password: password
         phone: phone
         email: email

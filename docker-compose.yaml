@@ -6,9 +6,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    depends_on:
-      - postgres
-      - redis
     environment:
       - EXTERNAL_PORT=8080
       - PGUSER=postgres
@@ -17,15 +14,23 @@ services:
       - PGHOST=postgres.host
       - PORT=3000
       - PGPORT=5432
+      - REDIS_URL=redis://redis:6379
     ports:
       - "3000:3000"
+    depends_on:
+      - redis
+      - nginx
+      - postgres
     links:
       - postgres:postgres.host
-    # - redis
+      - redis
+      - nginx
+    working_dir: /app/
     command: npm run serve
     volumes:
       - .:/app
   postgres:
+    restart: on-failure
     container_name: postgres
     image: postgres
     ports:
@@ -36,18 +41,17 @@ services:
       POSTGRES_DB: db
     volumes:
       - ./data:/var/lib/postgresql/data
-  redis-server:
-    container_name: redis
+  redis:
     image: redis
+    restart: always
     ports:
       - "6379:6379"
   nginx:
     build:
       context: ./nginx/
       dockerfile: Dockerfile
+    restart: on-failure
     ports:
       - "8080:80"
-    depends_on:
-      - express_backend
-    links:
-      - express_backend
+
+    command: 'bash -c "cat /etc/nginx/conf.d/express.template > /etc/nginx/conf.d/default.conf && nginx -g ''daemon off;''"'

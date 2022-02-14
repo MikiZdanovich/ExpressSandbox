@@ -17,7 +17,7 @@ const Redis = require('./src/service/redisService')
 
 class ExpressServer {
   constructor (config) {
-    this.redisServer = new Redis()
+    this.redisServer = Redis
     this.port = config.PORT
     this.app = express()
     this.swagger = new SwaggerMiddleware(this.app)
@@ -44,8 +44,18 @@ class ExpressServer {
 
   async launch () {
     http.createServer(this.app).listen(this.port)
-    this.redisServer.start()
     logger.info(`Listening on port ${this.port}`)
+  }
+
+  async connectRedis () {
+    try {
+      logger.info('Checking Redis connection...')
+      await this.redisServer.start()
+      logger.info('Redis Connected!')
+    } catch (error) {
+      logger.error(`Unable to connect to Redis. ${error}`)
+      process.exit(1)
+    }
   }
 
   async assertDatabaseConnectionOk () {
@@ -54,7 +64,7 @@ class ExpressServer {
       await db.sequelize.sync()
       logger.info('Database connection OK!')
     } catch (error) {
-      logger.error(`Unable to connect to DB. ${error.message}`)
+      logger.error(`Unable to connect to DB. ${error}`)
       process.exit(1)
     }
   }

@@ -11,6 +11,8 @@ const launchServer = async () => {
     await expressServer.launch()
 
     logger.info('Express server running')
+
+    await expressServer.connectRedis()
   } catch (error) {
     logger.error('Express Server failure', error)
     await this.close()

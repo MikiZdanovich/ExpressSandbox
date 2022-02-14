@@ -1,4 +1,3 @@
-const redisService = require('./redisService')
 const logger = require('../utils/logger')
 const Service = require('./Service')
 const JwtService = require('./jwtService')
@@ -9,7 +8,7 @@ const jwtService = new JwtService(secrets)
 async function loginUser (request) {
   const user = await tokenUtils.verifyUser(request)
 
-  const { accessToken, refreshToken } = jwtService.generate(user.id, user.email)
+  const { accessToken, refreshToken } = await jwtService.generate(user.id, user.email)
 
   return Service.successResponse({
     accessToken: accessToken,
@@ -19,19 +18,8 @@ async function loginUser (request) {
 
 async function refreshToken (request) {
   try {
-    const token = await tokenUtils.verifyToken(request)
-
-    await redisService.set(
-      {
-        key: token,
-        value: '1',
-        timeType: 'EX',
-        time: secrets.jwtRefreshTime
-      }
-    )
-
-    const user = tokenUtils.verifyUser(request)
-    jwtService.generate(user.id, user.name)
+    await tokenUtils.verifyToken(request)
+    await loginUser(request)
   } catch (e) {
     logger.error(e)
     e.code = 401

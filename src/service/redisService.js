@@ -4,17 +4,17 @@ const redisConfig = require('../../config/redis')
 
 class RedisService {
   constructor () {
-    this.client = createClient({
+    this.configuration = { url: redisConfig.url } || {
       host: redisConfig.host,
       port: redisConfig.port
-    })
+    }
+    this.client = createClient(this.configuration)
   }
 
   async start () {
     await this.client.connect()
     await this.client.on('error', (err) => {
       logger.error(err)
-      process.exit('1')
     })
     await this.client.on('connect', () => {
       logger.info('Redis cache is ready')
@@ -26,7 +26,7 @@ class RedisService {
     logger.info('redis connection shut down')
   }
 
-  async set (key, value, timeType, time) {
+  async set ({ key, value, timeType, time }) {
     await this.client.set(key, value, timeType, time)
   }
 
@@ -36,4 +36,4 @@ class RedisService {
   }
 }
 
-module.exports = RedisService
+module.exports = new RedisService()

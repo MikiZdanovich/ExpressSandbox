@@ -1,2 +1,2 @@
 FROM nginx
-COPY nginx.conf /etc/nginx/conf.d/
+COPY express.conf /etc/nginx/conf.d/express.template
