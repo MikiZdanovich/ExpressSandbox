@@ -23,12 +23,12 @@ async function verifyToken (request) {
 
   const token = request.body.refresh
   try {
-    const decoded = jwt.verify(token, secrets.accessTokenSecret)
+    const decoded = jwt.verify(token, secrets.refreshTokenSecret)
     if (!decoded) {
       return Service.rejectResponse({ message: 'Refresh token is invalid' }, 401)
     }
     const value = await redisService.get(token)
-    if (value) {
+    if (!value) {
       return Service.rejectResponse({ message: 'Refresh token was already used' }, 401)
     }
   } catch (e) {

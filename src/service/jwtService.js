@@ -8,25 +8,30 @@ class JwtService {
     this.redisService = Redis
   }
 
-  async generate (id, name) {
-    const accessToken = jwt.sign({
-      id: this.id,
-      name: this.name
-    }, this.config.accessTokenSecret, { expiresIn: parseInt(this.config.jwtAccessTime, 10) })
-
-    const refreshToken = await jwt.sign({
-      id: this.id,
-      name: this.name
-    }, this.config.refreshTokenSecret, { expiresIn: parseInt(this.config.jwtRefreshTime, 10) })
-
+  async saveToken (id, refreshToken) {
     await this.redisService.set(
       {
-        key: refreshToken,
-        value: '1',
+        key: id,
+        value: refreshToken,
         timeType: 'EX',
         time: secrets.jwtRefreshTime
       }
     )
+  }
+
+  async generate (id, username) {
+    const accessToken = jwt.sign({
+      id: id,
+      username: username
+    }, this.config.accessTokenSecret, { expiresIn: parseInt(this.config.jwtAccessTime, 10) })
+
+    const refreshToken = await jwt.sign({
+      id: id,
+      username: username
+    }, this.config.refreshTokenSecret, { expiresIn: parseInt(this.config.jwtRefreshTime, 10) })
+
+    await this.saveToken(id, refreshToken)
+
     return { accessToken, refreshToken }
   }
 }
