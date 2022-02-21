@@ -19,8 +19,8 @@ class Controller {
   static sendError (res, err) {
     res.status(err.status || err.code || 500).json({
       code: err.status || err.code || 500,
-      message: err.name || err.error.name || 'Bad request',
-      errors: err.errors || err.error.message || 'Something goes wrong'
+      message: err.name || err.error.message || err.error.name || 'Bad request',
+      errors: err.errors || 'Something goes wrong'
     })
   }
 

@@ -9,57 +9,6 @@ servers:
   - url: http://localhost:3000
   - url: https://petstore.godel
 paths:
-  /login:
-    post:
-      operationId: loginUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Login'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Login'
-        description: Pet object that needs to be added to the store
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Token'
-          description: successful operation
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Invalid username/password supplied
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Auth header required
-      summary: Logs user into the system
-      security: [ ]
-      tags:
-        - login flow
-      x-eov-operation-handler: controllers/AuthController
-  /logout:
-    get:
-      operationId: logoutUser
-      responses:
-        default:
-          content: { }
-          description: successful operation
-      summary: Logs out current logged in user session
-      tags:
-        - login flow
-      x-eov-operation-handler: controllers/UserController
   /user:
     post:
       description: This can only be done by the logged in user.
@@ -75,7 +24,10 @@ paths:
 
       responses:
         "200":
-          content: { }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
           description: successful operation
         "405":
           content:
@@ -172,6 +124,57 @@ paths:
       tags:
         - user
       x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/UserController
+  /login:
+    post:
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Login'
+        description: Pet object that needs to be added to the store
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: successful operation
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid username/password supplied
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Auth header required
+      summary: Logs user into the system
+      security: [ ]
+      tags:
+        - login flow
+      x-eov-operation-handler: controllers/AuthController
+  /logout:
+    get:
+      operationId: logoutUser
+      responses:
+        default:
+          content: { }
+          description: successful operation
+      summary: Logs out current logged in user session
+      tags:
+        - login flow
       x-eov-operation-handler: controllers/UserController
   /pet:
     get:
