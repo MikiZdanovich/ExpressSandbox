@@ -4,3 +4,4 @@ node_modeles/
 data/
 *.log
 uploaded_files/
+node_modules
