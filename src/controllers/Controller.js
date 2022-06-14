@@ -23,6 +23,9 @@ class Controller {
       errors: err.errors || 'Something goes wrong'
     })
   }
+  static successResponse(payload, code = 200) {
+    return { payload, code }
+  }
 
   static async handleRequest (request, response, serviceOperation) {
     try {

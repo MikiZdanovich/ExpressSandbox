@@ -9,6 +9,7 @@
 const Controller = require('../controllers/Controller')
 const service = require('../service/StoreService')
 const deleteOrder = async (request, response) => {
+  
   await Controller.handleRequest(request, response, service.deleteOrder)
 }
 

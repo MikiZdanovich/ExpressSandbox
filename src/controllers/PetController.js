@@ -1,24 +1,59 @@
-const Controller = require('./Controller')
-const service = require('../service/PetService')
+const Controller = require('./Controller');
+const PetService = require('../service/PetService.js')
+const {
+  setGetPetsParams,
+  setPostPetParams,
+  setPetIdFromHeaders,
+  setUploadFilePayload,
+} = require("../utils/petUtil");
+
+// ToDo create in other place
+
+const petService = new PetService()
+
+
+// ToDo Add normal error handling
 
 const addPet = async (request, response) => {
-  await Controller.handleRequest(request, response, service.addPet)
+  const pet_info = setPostPetParams(request)
+
+  pet = await petService.addPet(pet_info)
+
+  Controller.sendResponse(response, Controller.successResponse(pet, 201))
 }
 
 const deletePet = async (request, response) => {
-  await Controller.handleRequest(request, response, service.deletePet)
+  const petId = setPetIdFromHeaders(request)
+
+  await petService.deletePet(petId)
+
+  Controller.sendResponse(response, Controller.successResponse(null, 204))
 }
 
 const getPets = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getPets)
+  const request_params = setGetPetsParams(request)
+
+  const pets = await petService.getPets(request_params);
+
+  Controller.sendResponse(response, Controller.successResponse(pets))
 }
 
 const updatePet = async (request, response) => {
-  await Controller.handleRequest(request, response, service.updatePet)
+  // ToDo extract id from path
+  const id = setPetIdFromHeaders(request)
+  const pet_info = setPostPetParams(request)
+
+  const updated_pet = await petService.updatePet(id, pet_info)
+
+  Controller.sendResponse(response, Controller.successResponse(updated_pet, 204))
 }
 
 const uploadPetImage = async (request, response) => {
-  await Controller.handleRequest(request, response, service.uploadFile)
+  const { payload, id } = setUploadFilePayload(request)
+
+  await petService.uploadFile(id, payload)
+
+  Controller.sendResponse(response, Controller.successResponse(null, 204))
 }
 
 module.exports = {

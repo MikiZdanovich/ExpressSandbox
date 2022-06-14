@@ -32,17 +32,14 @@ function setUploadFilePayload (request) {
   const filename = request.body.filename || null
   if (request.files || Object.keys(request.files).length !== 0) {
     request.files.forEach((file) => {
-      try {
-        const fileData = fs.readFileSync(file.path, 'base64')
-        payload.push({
+
+      const fileData = fs.readFileSync(file.path, 'base64')
+      payload.push({
           filename: filename || file.originalname,
           type: file.mimetype,
           data: fileData
         })
-      } catch (e) {
-        logger.error(e)
-        throw e
-      }
+      
     })
     return { payload, id }
   }
