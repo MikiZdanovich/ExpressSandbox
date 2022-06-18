@@ -15,7 +15,7 @@ class PetService {
   }
 
   async updatePet(id, pet_info) {
-    return models.Pet.update(payload, { where: id });
+    return models.Pet.update(pet_info, { where: id });
   }
 
   async uploadFile(id, payload) {
