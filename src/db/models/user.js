@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
+
   User.init({
     username: {
       type: DataTypes.STRING,
@@ -58,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (models) => {
     User.hasMany(models.Category, {
       foreignKey: {
-        name: 'categoryId',
+        name: 'userId',
         allowNull: true
       },
       as: 'categories'

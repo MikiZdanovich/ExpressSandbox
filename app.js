@@ -12,6 +12,7 @@ const authenticateJWT = require('./src/middleware/authentication')
 const petRoutes = require('./src/routes/petRoutes')
 const authRoutes = require('./src/routes/authRoutes')
 const userRoutes = require('./src/routes/userRoutes')
+const categoryRoutes = require('./src/routes/categoryRoutes')
 
 const Redis = require('./src/service/redisService')
 
@@ -40,6 +41,7 @@ class ExpressServer {
     this.app.use('/pet', authenticateJWT, petRoutes)
     this.app.use('/login', authRoutes)
     this.app.use('/user', userRoutes)
+    this.app.use('/category', authenticateJWT, categoryRoutes)
   }
 
   async launch () {
