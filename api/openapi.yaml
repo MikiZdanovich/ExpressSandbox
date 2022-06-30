@@ -370,7 +370,49 @@ paths:
 
       x-eov-operation-handler: controllers/PetController
       x-eov-operation-id: uploadPetImage
-
+  /category:
+    post:
+      operationId: categoryCreate
+      requestBody:
+        description: Create category for user
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Category'
+      responses:
+        "201":
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Category'
+           description: Created category information
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - category
+  /category/{categoryId}:
+    get:
+      operationId: categoryGet
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+           description: Return category info.
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Category'
+        "404":
+          description: Category not found
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - category
+  
   /store/order:
     post:
       operationId: placeOrder
@@ -397,8 +439,6 @@ paths:
       summary: Place an order for a pet
       tags:
         - store
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/StoreController
   /store/order/{orderId}:
     delete:
       description: For valid response try integer IDs with positive integer value.
@@ -515,19 +555,6 @@ components:
           type: string
         errors:
           description: Errors object
-    Category:
-      example:
-        name: name
-        id: 6
-      properties:
-        id:
-          format: int64
-          type: integer
-        name:
-          type: string
-      type: object
-      xml:
-        name: Category
     Pet:
       example:
         photoUrls:
@@ -655,6 +682,18 @@ components:
       type: object
       xml:
         name: User
+    Category:
+      example:
+        name: "CategoryName"
+        description: "Dscription"
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      type: object
+      xml:
+        name: Category
   securitySchemes:
     bearerAuth:
       type: http
