@@ -20,10 +20,12 @@ class JwtService {
   }
 
   async generate (payload) {
-    const accessToken = jwt.sign({
+    const dataToGenerate = {
       id: payload.id,
       username: payload.username
-    }, this.config.accessTokenSecret, { expiresIn: parseInt(this.config.jwtAccessTime, 10) })
+    }
+    console.log(dataToGenerate)
+    const accessToken = jwt.sign(dataToGenerate, this.config.accessTokenSecret, { expiresIn: parseInt(this.config.jwtAccessTime, 10) })
 
     const refreshToken = await jwt.sign({
       id: payload.id,
