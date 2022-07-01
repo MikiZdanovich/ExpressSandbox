@@ -19,7 +19,7 @@ const addPet = async (request, response) => {
 
   pet = await petService.addPet(request.body)
 
-  Controller.sendResponse(response, Controller.successResponse(pet, status_code=201))
+  Controller.sendResponse(response, Controller.successResponse(pet, status_code = 201))
 }
 
 const deletePet = async (request, response) => {
@@ -39,22 +39,22 @@ const getPets = async (request, response) => {
 }
 
 const updatePet = async (request, response) => {
-  // ToDo extract id from path
-  const id = setPetIdFromHeaders(request)
-  const pet_info = setPostPetParams(request)
+  const petId = request.params.petId
+  const petInfo = request.body;
 
-  const updated_pet = await petService.updatePet(id, pet_info)
+  const pet = await petService.updatePet(petId, petInfo);
 
-  Controller.sendResponse(response, Controller.successResponse(updated_pet, 204))
+  Controller.sendResponse(response, Controller.successResponse(pet, 200))
 }
 
 const uploadPetImage = async (request, response) => {
   const { payload, id } = setUploadFilePayload(request)
+  console.log(request)
 
-  await petService.uploadFile(id, payload)
-
-  Controller.sendResponse(response, Controller.successResponse(null, 204))
+  await petService.uploadFile(request.params.id, image, fileName)
+  getPet(request, response)
 }
+
 
 const getPet = async (request, response) => {
   const petId = request.params["petId"]

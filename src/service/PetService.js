@@ -18,8 +18,10 @@ class PetService {
     await models.Pet.destroy({ where: {id: petId} });
   }
 
-  async updatePet(id, pet_info) {
-    return models.Pet.update(pet_info, { where: id });
+  async updatePet(petId, petInfo) {
+    const pet = await models.Pet.update(petInfo, { where: {id: petId} });
+    
+    return await this.getPet(petId)
   }
 
   async uploadFile(id, payload) {

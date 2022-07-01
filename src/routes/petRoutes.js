@@ -15,7 +15,7 @@ router.get('/', getPets)
 
 router.post('/', addPet)
 
-router.put('/', updatePet)
+router.put('/:petId', updatePet)
 
 router.delete('/:petId', deletePet)
 

@@ -256,6 +256,51 @@ paths:
       x-codegen-request-body-name: body
       tags:
           - pet
+    put:
+      operationId: updatePet
+      parameters:
+        - in: path
+          name: petId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetInfo'
+        description: Pet object that needs to be added to the store
+        required: true
+      responses:
+        "200":
+           description: Return category info.
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Pet'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid ID supplied
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: Pet not found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: Validation exception
+      summary: Update an existing pet
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - pet
   /pet:
     get:
       description: Retrieve list Pets
@@ -301,7 +346,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/PetInfo'
           application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
@@ -321,48 +366,6 @@ paths:
                 $ref: '#/components/schemas/Pet'
           description: Invalid input
       summary: Add a new pet to the store
-      tags:
-        - pet
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/PetController
-    put:
-      operationId: updatePet
-      description: Update an existing pet
-      parameters:
-        - description: ID of pet to return
-          in: header
-          name: id
-          required: true
-          schema:
-            format: int64
-            type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        description: Pet object that needs to be added to the store
-        required: true
-      responses:
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Invalid ID supplied
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Pet not found
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Validation exception
-      summary: Update an existing pet
       tags:
         - pet
       x-codegen-request-body-name: body
@@ -556,12 +559,36 @@ components:
           type: string
         errors:
           description: Errors object
-    Pet:
+    PetInfo:
       example:
         name: doggie
         categoryId: 6
         status: available
       properties:
+        category:
+          type: integer
+        name:
+          example: doggie
+          type: string
+        status:
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+          type: string
+      required:
+        - name
+      type: object
+    Pet:
+      example:
+        id: 130
+        name: doggie
+        categoryId: 6
+        status: available
+      properties:
+        id:
+          type: integer
         category:
           type: integer
         name:
