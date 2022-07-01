@@ -6,6 +6,10 @@ class PetService {
     return await models.Pet.findAll({ where: request_params });
   }
 
+  async getPet(petId) {
+    return await models.Pet.findByPk(petId);
+  }
+
   async addPet(pet_info) {
     return await models.Pet.create(pet_info);
   }

@@ -15,11 +15,10 @@ const petService = new PetService()
 // ToDo Add normal error handling
 
 const addPet = async (request, response) => {
-  const pet_info = setPostPetParams(request)
 
-  pet = await petService.addPet(pet_info)
+  pet = await petService.addPet(request.body)
 
-  Controller.sendResponse(response, Controller.successResponse(pet, 201))
+  Controller.sendResponse(response, Controller.successResponse(pet, status_code=201))
 }
 
 const deletePet = async (request, response) => {

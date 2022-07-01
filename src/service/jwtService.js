@@ -3,12 +3,12 @@ const Redis = require('../../src/service/redisService')
 const secrets = require('../../config/secrets')
 
 class JwtService {
-  constructor (config) {
+  constructor(config) {
     this.config = config
     this.redisService = Redis
   }
 
-  async saveToken (payload, refreshToken) {
+  async saveToken(payload, refreshToken) {
     await this.redisService.set(
       {
         key: payload.id,
@@ -20,6 +20,7 @@ class JwtService {
   }
 
   async generate (payload) {
+
     const accessToken = jwt.sign({
       id: payload.id,
       username: payload.username

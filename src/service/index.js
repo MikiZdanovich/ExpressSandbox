@@ -1,5 +1,5 @@
-const PetService = require('./PetService')
+const PetService = require("./PetService");
 
 module.exports = {
-  PetService
-}
+  PetService,
+};

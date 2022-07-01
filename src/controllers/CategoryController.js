@@ -25,11 +25,19 @@ const getCategory = async (request, response) => {
 
         Controller.sendResponse(response, Controller.successResponse(category, 200))
     }
+}
 
+const getCategories = async(request, response) => {
+
+    userId = request.user["id"]
+    const categories = await CategoryService.getCategories(userId)
+    Controller.sendResponse(response, Controller.successResponse(categories, 200))
 
 }
 
 module.exports = {
     addCategory,
     getCategory,
+    getCategories,
+    
 }
