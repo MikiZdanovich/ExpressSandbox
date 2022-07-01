@@ -6,6 +6,7 @@ const {
   setPetIdFromHeaders,
   setUploadFilePayload,
 } = require("../utils/petUtil");
+const { response } = require('../routes/petRoutes');
 
 // ToDo create in other place
 
@@ -22,11 +23,11 @@ const addPet = async (request, response) => {
 }
 
 const deletePet = async (request, response) => {
-  const petId = setPetIdFromHeaders(request)
+  const petId = request.params["petId"]
 
   await petService.deletePet(petId)
 
-  Controller.sendResponse(response, Controller.successResponse(null, 204))
+  Controller.sendResponse(response, Controller.successResponse(204))
 }
 
 const getPets = async (request, response) => {
@@ -55,10 +56,17 @@ const uploadPetImage = async (request, response) => {
   Controller.sendResponse(response, Controller.successResponse(null, 204))
 }
 
+const getPet = async (request, response) => {
+  const petId = request.params["petId"]
+  const pet = await petService.getPet(petId)
+  Controller.sendResponse(response, Controller.successResponse(pet, 200))
+}
+
 module.exports = {
   addPet,
   deletePet,
   getPets,
   updatePet,
-  uploadPetImage
+  uploadPetImage,
+  getPet
 }

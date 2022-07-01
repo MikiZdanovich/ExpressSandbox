@@ -15,7 +15,7 @@ class PetService {
   }
 
   async deletePet(petId) {
-    await models.Pet.destroy({ where: petId });
+    await models.Pet.destroy({ where: {id: petId} });
   }
 
   async updatePet(id, pet_info) {

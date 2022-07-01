@@ -5,7 +5,8 @@ const {
   getPets,
   updatePet,
   deletePet,
-  uploadPetImage
+  uploadPetImage,
+  getPet,
 } = require('../controllers/PetController')
 
 const router = Router()
@@ -16,8 +17,10 @@ router.post('/', addPet)
 
 router.put('/', updatePet)
 
-router.delete('/', deletePet)
+router.delete('/:petId', deletePet)
 
 router.post('/uploadImage', uploadPetImage)
+
+router.get('/:petId', getPet)
 
 module.exports = router
