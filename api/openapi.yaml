@@ -370,18 +370,15 @@ paths:
         - pet
       x-codegen-request-body-name: body
       x-eov-operation-handler: controllers/PetController
-  /pet/uploadImage:
+  /pet/{petId}/uploadImage:
     post:
       operationId: uploadFile
       parameters:
-        - description: ID of pet to update
-          explode: false
-          in: header
-          name: id
-          required: true
-          schema:
-            format: int64
-            type: integer
+            - in: path
+              name: petId
+              schema:
+                type: integer
+              required: true
       requestBody:
         content:
           multipart/form-data:
@@ -392,9 +389,6 @@ paths:
                   type: string
                   description: file to upload
                   format: binary
-                filename:
-                  type: string
-                  description: name of image
             encoding:
               file:
                 contentType: image/png, image/jpeg
@@ -528,8 +522,8 @@ components:
   schemas:
     Login:
       example:
-        username: Username
-        password: Password
+        username: username
+        password: password
       type: object
       properties:
         accessToken:

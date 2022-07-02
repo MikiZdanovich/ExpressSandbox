@@ -24,10 +24,10 @@ class PetService {
     return await this.getPet(petId)
   }
 
-  async uploadFile(id, payload) {
-    for (const item of payload) {
-      await models.Image.create(item, { where: id });
-    }
+  async uploadFile(petId, fileName, file) {
+
+  await models.Image.create({petId: petId, filename: fileName, data: file});
+    
 
   }
 }

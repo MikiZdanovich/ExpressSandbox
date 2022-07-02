@@ -1,4 +1,4 @@
-const Router = require('express')
+const Router = require("express");
 
 const {
   addPet,
@@ -7,20 +7,23 @@ const {
   deletePet,
   uploadPetImage,
   getPet,
-} = require('../controllers/PetController')
+} = require("../controllers/PetController");
 
-const router = Router()
+const router = Router();
 
-router.get('/', getPets)
+const multer = require("multer");
+const upload = multer({ dest: "." });
 
-router.post('/', addPet)
+router.get("/", getPets);
 
-router.put('/:petId', updatePet)
+router.post("/", addPet);
 
-router.delete('/:petId', deletePet)
+router.put("/:petId", updatePet);
 
-router.post('/uploadImage', uploadPetImage)
+router.delete("/:petId", deletePet);
 
-router.get('/:petId', getPet)
+router.post("/:petId/uploadImage", upload.single("file"), uploadPetImage);
 
-module.exports = router
+router.get("/:petId", getPet);
+
+module.exports = router;

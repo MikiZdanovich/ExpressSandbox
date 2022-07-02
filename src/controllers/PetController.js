@@ -46,13 +46,16 @@ const updatePet = async (request, response) => {
 
   Controller.sendResponse(response, Controller.successResponse(pet, 200))
 }
+const multer  = require('formidable');
 
 const uploadPetImage = async (request, response) => {
-  const { payload, id } = setUploadFilePayload(request)
-  console.log(request)
+  const petId = request.params["petId"]
 
-  await petService.uploadFile(request.params.id, image, fileName)
-  getPet(request, response)
+  fileName = request.files[0].originalname
+  file =  request.files[0].buffer
+  await petService.uploadFile(petId, fileName,  file)
+  
+  Controller.sendResponse(response, Controller.successResponse(200))
 }
 
 
