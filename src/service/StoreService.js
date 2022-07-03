@@ -1,65 +1,19 @@
 const Service = require("./Service");
+const models = require("../db/models");
 
+class OrderService {
+  async createOrder(ordeInfo) {
+    return await models.Order.create(ordeInfo);
+  }
 
-const deleteOrder = ({ orderId }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(
-        Service.successResponse({
-          orderId,
-        })
-      );
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
+  async deleteOrder(orderId){
+    models.Order.destroy({ where: { id: orderId } });
+}
 
-const getInventory = () =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({}));
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
+async geteOrder(orderId){
+  return await models.Order.findByPk(orderId);
+}
+}
 
-const getOrderById = ({ orderId }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(
-        Service.successResponse({
-          orderId,
-        })
-      );
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
+module.exports = new OrderService()
 
-const placeOrder = ({ body }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(
-        Service.successResponse({
-          body,
-        })
-      );
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
-
-module.exports = {
-  deleteOrder,
-  getInventory,
-  getOrderById,
-  placeOrder,
-};

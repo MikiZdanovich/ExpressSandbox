@@ -418,7 +418,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/OrderInfo'
         description: order placed for purchasing the pet
         required: true
       responses:
@@ -454,6 +454,9 @@ paths:
             type: integer
           style: simple
       responses:
+        "204":
+            content: { }
+            description: Pet destroyed
         "400":
           content: { }
           description: Invalid ID supplied
@@ -497,24 +500,6 @@ paths:
           content: { }
           description: Order not found
       summary: Find purchase order by ID
-      tags:
-        - store
-      x-eov-operation-handler: controllers/StoreController
-  /store/inventory:
-    get:
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                additionalProperties:
-                  format: int32
-                  type: integer
-                type: object
-          description: successful operation
-      summary: Returns pet inventories by status
       tags:
         - store
       x-eov-operation-handler: controllers/StoreController
@@ -597,20 +582,6 @@ components:
           type: string
       required:
         - name
-      type: object
-    Tag:
-      example:
-        name: name
-        id: 1
-      properties:
-        id:
-          format: int64
-          type: integer
-        name:
-          type: string
-      type: object
-      xml:
-        name: Tag
     Order:
       example:
         petId: 6
@@ -644,6 +615,35 @@ components:
       type: object
       xml:
         name: Order
+    OrderInfo:
+      example:
+        petId: 2
+        quantity: 1
+        shipDate: 2000-01-23T04:56:07.000+00:00
+        complete: true
+        status: placed
+      properties:
+        petId:
+          format: int64
+          type: integer
+        quantity:
+          format: int32
+          type: integer
+        shipDate:
+          format: date-time
+          type: string
+        status:
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+          type: string
+        complete:
+          type: boolean
+      type: object
+      xml:
+        name: OrderInfo
     User:
       example:
         firstname: firstname

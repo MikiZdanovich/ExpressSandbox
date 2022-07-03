@@ -1,6 +1,5 @@
 const models = require("../db/models");
 
-
 class PetService {
   async getPets(request_params) {
     return await models.Pet.findAll({ where: request_params });
@@ -15,21 +14,18 @@ class PetService {
   }
 
   async deletePet(petId) {
-    await models.Pet.destroy({ where: {id: petId} });
+    await models.Pet.destroy({ where: { id: petId } });
   }
 
   async updatePet(petId, petInfo) {
-    const pet = await models.Pet.update(petInfo, { where: {id: petId} });
-    
-    return await this.getPet(petId)
+    const pet = await models.Pet.update(petInfo, { where: { id: petId } });
+
+    return await this.getPet(petId);
   }
 
   async uploadFile(petId, fileName, file) {
-
-  await models.Image.create({petId: petId, filename: fileName, data: file});
-    
-
+    await models.Image.create({ petId: petId, filename: fileName, data: file });
   }
 }
 
-module.exports = PetService
+module.exports = PetService;

@@ -12,7 +12,7 @@ const petRoutes = require('./src/routes/petRoutes')
 const authRoutes = require('./src/routes/authRoutes')
 const userRoutes = require('./src/routes/userRoutes')
 const categoryRoutes = require('./src/routes/categoryRoutes')
-
+const orderRoutes = require('./src/routes/storeRoutes')
 const Redis = require('./src/service/redisService')
 
 class ExpressServer {
@@ -39,6 +39,7 @@ class ExpressServer {
     this.app.use('/login', authRoutes)
     this.app.use('/user', userRoutes)
     this.app.use('/category', authenticateJWT, categoryRoutes)
+    this.app.use('/store', authenticateJWT, orderRoutes)
   }
 
   async launch() {
