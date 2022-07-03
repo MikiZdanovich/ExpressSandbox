@@ -28,4 +28,4 @@ class PetService {
   }
 }
 
-module.exports = PetService;
+module.exports = new  PetService();

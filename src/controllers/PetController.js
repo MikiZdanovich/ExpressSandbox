@@ -1,19 +1,9 @@
 const Controller = require('./Controller');
-const PetService = require('../service/PetService.js')
+const petService = require('../service/PetService.js')
 const {
   setGetPetsParams,
-  setPostPetParams,
-  setPetIdFromHeaders,
-  setUploadFilePayload,
 } = require("../utils/petUtil");
-const { response } = require('../routes/petRoutes');
 
-// ToDo create in other place
-
-const petService = new PetService()
-
-
-// ToDo Add normal error handling
 
 const addPet = async (request, response) => {
 
@@ -31,9 +21,9 @@ const deletePet = async (request, response) => {
 }
 
 const getPets = async (request, response) => {
-  const request_params = setGetPetsParams(request)
+  const petParams = request.body
 
-  const pets = await petService.getPets(request_params);
+  const pets = await petService.getPets(petParams);
 
   Controller.sendResponse(response, Controller.successResponse(pets))
 }
