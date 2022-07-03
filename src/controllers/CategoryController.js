@@ -16,7 +16,6 @@ const addCategory = async (request, response) => {
 const getCategory = async (request, response) => {
     categoryId = request.params["categoryId"]
 
-
     const category = await CategoryService.getCategory(categoryId)
 
     if (!category) {

@@ -1,9 +1,5 @@
 const Controller = require('./Controller');
 const petService = require('../service/PetService.js')
-const {
-  setGetPetsParams,
-} = require("../utils/petUtil");
-
 
 const addPet = async (request, response) => {
 
@@ -36,7 +32,6 @@ const updatePet = async (request, response) => {
 
   Controller.sendResponse(response, Controller.successResponse(pet, 200))
 }
-const multer  = require('formidable');
 
 const uploadPetImage = async (request, response) => {
   const petId = request.params["petId"]

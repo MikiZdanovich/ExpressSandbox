@@ -10,7 +10,6 @@ const {
 } = require("../controllers/PetController");
 
 const router = Router();
-
 const multer = require("multer");
 const upload = multer({ dest: "." });
 

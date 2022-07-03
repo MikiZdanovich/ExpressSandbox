@@ -23,7 +23,6 @@ const getOrderById = async (request, response) => {
 }
 
 const placeOrder = async (request, response) => {
-
   orderInfo = request.body
   order = await OrderService.createOrder(orderInfo)
   Controller.sendResponse(response, Controller.successResponse(order, 200))

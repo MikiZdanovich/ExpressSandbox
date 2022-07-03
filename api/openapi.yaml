@@ -9,122 +9,6 @@ servers:
   - url: http://localhost:3000
   - url: https://petstore.godel
 paths:
-  /user:
-    post:
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      security: [ ]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
-
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-          description: successful operation
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Failed to create user
-      summary: Create user
-      tags:
-        - user
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/UserController
-    delete:
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - description: The name that needs to be deleted
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      responses:
-        "400":
-          content: { }
-          description: Invalid username supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Delete user
-      tags:
-        - user
-      x-eov-operation-handler: controllers/UserController
-    get:
-      operationId: getUserByName
-      parameters:
-        - description: 'The name that needs to be fetched. Use user1 for testing. '
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: successful operation
-        "400":
-          content: { }
-          description: Invalid username supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Get user by user name
-      tags:
-        - user
-      x-eov-operation-handler: controllers/UserController
-    put:
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - description: name that need to be updated
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Updated user object
-        required: true
-      responses:
-        "400":
-          content: { }
-          description: Invalid user supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Updated user
-      tags:
-        - user
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/UserController
   /login:
     post:
       operationId: loginUser
@@ -503,6 +387,37 @@ paths:
       tags:
         - store
       x-eov-operation-handler: controllers/StoreController
+  /user:
+    post:
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      security: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Created user object
+        required: true
+
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: successful operation
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failed to create user
+      summary: Create user
+      tags:
+        - user
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/UserController
 components:
   schemas:
     Login:
