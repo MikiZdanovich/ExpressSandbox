@@ -7,26 +7,29 @@
  */
 
 const Controller = require('../controllers/Controller')
-const service = require('../service/StoreService')
+const OrderService = require('../service/StoreService')
+
 const deleteOrder = async (request, response) => {
-  await Controller.handleRequest(request, response, service.deleteOrder)
+  orderId = request.params["orderId"]
+  OrderService.deleteOrder(orderId)
+  Controller.sendResponse(response, Controller.successResponse(204))
 }
 
-const getInventory = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getInventory)
-}
 
 const getOrderById = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getOrderById)
+  orderId = request.params["orderId"]
+  const order = await OrderService.geteOrder(orderId)
+  Controller.sendResponse(response, Controller.successResponse(order, 200))
 }
 
 const placeOrder = async (request, response) => {
-  await Controller.handleRequest(request, response, service.placeOrder)
+  orderInfo = request.body
+  order = await OrderService.createOrder(orderInfo)
+  Controller.sendResponse(response, Controller.successResponse(order, 200))
 }
 
 module.exports = {
   deleteOrder,
-  getInventory,
   getOrderById,
   placeOrder
 }

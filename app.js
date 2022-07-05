@@ -3,7 +3,6 @@ const http = require('http')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const multer = require('multer')
 const db = require('./src/db/models')
 const logger = require('./src/utils/logger')
 const SwaggerMiddleware = require('./src/middleware/swagger')
@@ -12,42 +11,43 @@ const authenticateJWT = require('./src/middleware/authentication')
 const petRoutes = require('./src/routes/petRoutes')
 const authRoutes = require('./src/routes/authRoutes')
 const userRoutes = require('./src/routes/userRoutes')
-
+const categoryRoutes = require('./src/routes/categoryRoutes')
+const orderRoutes = require('./src/routes/storeRoutes')
 const Redis = require('./src/service/redisService')
 
 class ExpressServer {
-  constructor (config) {
+  constructor(config) {
     this.redisServer = Redis
     this.port = config.PORT
     this.app = express()
     this.swagger = new SwaggerMiddleware(this.app)
     this.errorFormater = new ErrorParser(this.app)
-    this.upload = multer(config.MulterOptions)
 
     this.SetupMiddleware()
   }
 
-  SetupMiddleware () {
+  SetupMiddleware() {
     // this.setupAllowedMedia();
     this.app.use(cors())
     this.app.use(bodyParser.json({ limit: '14MB' }))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: false }))
     this.app.use(cookieParser())
-    this.app.use(this.upload.any())
     this.swagger.init()
     this.errorFormater.init()
     this.app.use('/pet', authenticateJWT, petRoutes)
     this.app.use('/login', authRoutes)
     this.app.use('/user', userRoutes)
+    this.app.use('/category', authenticateJWT, categoryRoutes)
+    this.app.use('/store', authenticateJWT, orderRoutes)
   }
 
-  async launch () {
+  async launch() {
     http.createServer(this.app).listen(this.port)
     logger.info(`Listening on port ${this.port}`)
   }
 
-  async connectRedis () {
+  async connectRedis() {
     try {
       logger.info('Checking Redis connection...')
       await this.redisServer.start()
@@ -58,7 +58,7 @@ class ExpressServer {
     }
   }
 
-  async assertDatabaseConnectionOk () {
+  async assertDatabaseConnectionOk() {
     logger.info('Checking database connection...')
     try {
       await db.sequelize.sync()
@@ -69,7 +69,7 @@ class ExpressServer {
     }
   }
 
-  async close () {
+  async close() {
     if (this.app !== undefined) {
       await this.app.close()
       await this.redisServer.exit()

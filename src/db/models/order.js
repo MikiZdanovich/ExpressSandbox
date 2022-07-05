@@ -9,25 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate (models) {
+    static associate(models) {
       // define association here
     }
   }
 
   Order.init({
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true
-    },
-    petId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: false,
-      required: true,
-      foreignKey: true
-    },
     quantity: {
       type: DataTypes.INTEGER
     },
@@ -37,14 +24,20 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.ENUM,
       values: ['placed', 'approved', 'delivered']
-    },
-    complete: {
-      type: DataTypes.BOOLEAN,
-      default: false
     }
   }, {
     sequelize,
     modelName: 'Order'
-  })
+  }
+  )
+  Order.associate = (models) => {
+    Order.belongsTo(models.Pet, {
+      foreignKey: {
+        name: 'petId',
+        allowNull: false
+      },
+      as: 'orders'
+    });
+  };
   return Order
 }

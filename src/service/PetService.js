@@ -1,85 +1,31 @@
-const Service = require('./Service')
-const models = require('../db/models')
-const { setGetPetsParams, setPostPetParams, setPetIdFromHeaders, setUploadFilePayload } = require('../utils/petUtil')
+const models = require("../db/models");
 
-async function getPets (request) {
-  try {
-    const params = setGetPetsParams(request)
-    const listPets = await models.Pet.findAll({
-      where: params
-    })
+class PetService {
+  async getPets(request_params) {
+    return await models.Pet.findAll({ where: request_params });
+  }
 
-    return Service.successResponse(listPets)
-  } catch (e) {
-    return Service.rejectResponse(
-      e.message || 'Invalid input',
-      e.status || 405
-    )
+  async getPet(petId) {
+    return await models.Pet.findByPk(petId);
+  }
+
+  async addPet(pet_info) {
+    return await models.Pet.create(pet_info);
+  }
+
+  async deletePet(petId) {
+    await models.Pet.destroy({ where: { id: petId } });
+  }
+
+  async updatePet(petId, petInfo) {
+    const pet = await models.Pet.update(petInfo, { where: { id: petId } });
+
+    return await this.getPet(petId);
+  }
+
+  async uploadFile(petId, fileName, file) {
+    await models.Image.create({ petId: petId, filename: fileName, data: file });
   }
 }
 
-async function addPet (request) {
-  try {
-    const payload = setPostPetParams(request)
-    const newPet = await models.Pet.create(payload)
-    return Service.successResponse(`Pet with id:${newPet.id} was created`, 201)
-  } catch (e) {
-    return Service.rejectResponse(
-      e.message || 'Invalid input',
-      e.status || 400
-    )
-  }
-}
-
-async function deletePet (request) {
-  try {
-    const petId = setPetIdFromHeaders(request)
-    await models.Pet.destroy({
-      where: petId
-    })
-    return Service.successResponse(null, 204)
-  } catch (e) {
-    return Service.rejectResponse(e.message || 'Invalid pet Id',
-      e.status || 405)
-  }
-}
-
-async function updatePet (request) {
-  try {
-    const payload = setPostPetParams(request)
-    const id = setPetIdFromHeaders(request)
-    models.Pet.update(payload, {
-      where: id
-    })
-    return Service.successResponse(null, 204)
-  } catch (e) {
-    Service.rejectResponse(
-      e.message || 'Invalid input',
-      e.status || 405)
-  }
-}
-
-async function uploadFile (request) {
-  const { payload, id } = setUploadFilePayload(request)
-  try {
-    for (const item of payload) {
-      await models.Image.create(item, {
-        where: id
-      })
-    }
-    return Service.successResponse(null, 204)
-  } catch (e) {
-    Service.rejectResponse(
-      e.message || 'Invalid input',
-      e.status || 405)
-  }
-}
-
-module.exports = {
-  getPets,
-  addPet,
-  deletePet,
-  updatePet,
-  uploadFile
-
-}
+module.exports = new  PetService();

@@ -9,122 +9,6 @@ servers:
   - url: http://localhost:3000
   - url: https://petstore.godel
 paths:
-  /user:
-    post:
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      security: [ ]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
-
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-          description: successful operation
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Failed to create user
-      summary: Create user
-      tags:
-        - user
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/UserController
-    delete:
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - description: The name that needs to be deleted
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      responses:
-        "400":
-          content: { }
-          description: Invalid username supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Delete user
-      tags:
-        - user
-      x-eov-operation-handler: controllers/UserController
-    get:
-      operationId: getUserByName
-      parameters:
-        - description: 'The name that needs to be fetched. Use user1 for testing. '
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-          description: successful operation
-        "400":
-          content: { }
-          description: Invalid username supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Get user by user name
-      tags:
-        - user
-      x-eov-operation-handler: controllers/UserController
-    put:
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - description: name that need to be updated
-          explode: false
-          in: header
-          name: username
-          required: true
-          schema:
-            type: string
-          style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Updated user object
-        required: true
-      responses:
-        "400":
-          content: { }
-          description: Invalid user supplied
-        "404":
-          content: { }
-          description: User not found
-      summary: Updated user
-      tags:
-        - user
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/UserController
   /login:
     post:
       operationId: loginUser
@@ -176,6 +60,131 @@ paths:
       tags:
         - login flow
       x-eov-operation-handler: controllers/UserController
+  /category:
+    post:
+      operationId: categoryCreate
+      requestBody:
+        description: Create category for user
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Category'
+      responses:
+        "201":
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Category'
+           description: Created category information
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - category
+  /category/{categoryId}:
+    get:
+      operationId: categoryGet
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+           description: Return category info.
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Category'
+        "404":
+          description: Category not found
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - category
+  /pet/{petId}:
+    get:
+      operationId: petGet
+      parameters:
+        - in: path
+          name: petId
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+           description: Return category info.
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Pet'
+        "404":
+          description: Pet not found
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - pet
+    delete:
+      operationId: petDetele
+      parameters:
+        - in: path
+          name: petId
+          schema:
+            type: integer
+          required: true
+      responses:
+        "204":
+          content: { }
+          description: Pet destroyed
+      summary: Deletes a pet
+      x-codegen-request-body-name: body
+      tags:
+          - pet
+    put:
+      operationId: updatePet
+      parameters:
+        - in: path
+          name: petId
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetInfo'
+        description: Pet object that needs to be added to the store
+        required: true
+      responses:
+        "200":
+           description: Return category info.
+           content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Pet'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid ID supplied
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: Pet not found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          description: Validation exception
+      summary: Update an existing pet
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/StoreController
+      tags:
+        - pet
   /pet:
     get:
       description: Retrieve list Pets
@@ -195,13 +204,6 @@ paths:
               type: string
             type: array
           style: form
-        - description: ID of pet to return
-          in: header
-          name: id
-          required: false
-          schema:
-            format: int64
-            type: integer
       responses:
         "200":
           content:
@@ -228,16 +230,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/PetInfo'
           application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
         description: Pet object that needs to be added to the store
         required: true
       responses:
-        "200":
-          content: { }
-          description: Pet Created Successfully
+        "201":
+           content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+           description: Created pet information
         "400":
           content:
             application/json:
@@ -249,92 +254,15 @@ paths:
         - pet
       x-codegen-request-body-name: body
       x-eov-operation-handler: controllers/PetController
-    delete:
-      operationId: deletePet
-      parameters:
-        - explode: false
-          in: header
-          name: api_key
-          required: true
-          schema:
-            type: string
-          style: simple
-        - description: Pet id to delete
-          explode: true
-          in: header
-          name: id
-          required: true
-          schema:
-            format: int64
-            type: integer
-      responses:
-        "204":
-          content: { }
-          description: Pet destroyed
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: 'Operation failed'
-      summary: Deletes a pet
-      tags:
-        - pet
-      x-eov-operation-handler: controllers/PetController
-    put:
-      operationId: updatePet
-      description: Update an existing pet
-      parameters:
-        - description: ID of pet to return
-          in: header
-          name: id
-          required: true
-          schema:
-            format: int64
-            type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        description: Pet object that needs to be added to the store
-        required: true
-      responses:
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Invalid ID supplied
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Pet not found
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-          description: Validation exception
-      summary: Update an existing pet
-      tags:
-        - pet
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/PetController
-  /pet/uploadImage:
+  /pet/{petId}/uploadImage:
     post:
       operationId: uploadFile
       parameters:
-        - description: ID of pet to update
-          explode: false
-          in: header
-          name: id
-          required: true
-          schema:
-            format: int64
-            type: integer
+            - in: path
+              name: petId
+              schema:
+                type: integer
+              required: true
       requestBody:
         content:
           multipart/form-data:
@@ -345,9 +273,6 @@ paths:
                   type: string
                   description: file to upload
                   format: binary
-                filename:
-                  type: string
-                  description: name of image
             encoding:
               file:
                 contentType: image/png, image/jpeg
@@ -370,7 +295,6 @@ paths:
 
       x-eov-operation-handler: controllers/PetController
       x-eov-operation-id: uploadPetImage
-
   /store/order:
     post:
       operationId: placeOrder
@@ -378,7 +302,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/OrderInfo'
         description: order placed for purchasing the pet
         required: true
       responses:
@@ -397,8 +321,6 @@ paths:
       summary: Place an order for a pet
       tags:
         - store
-      x-codegen-request-body-name: body
-      x-eov-operation-handler: controllers/StoreController
   /store/order/{orderId}:
     delete:
       description: For valid response try integer IDs with positive integer value.
@@ -416,6 +338,9 @@ paths:
             type: integer
           style: simple
       responses:
+        "204":
+            content: { }
+            description: Pet destroyed
         "400":
           content: { }
           description: Invalid ID supplied
@@ -462,30 +387,43 @@ paths:
       tags:
         - store
       x-eov-operation-handler: controllers/StoreController
-  /store/inventory:
-    get:
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
+  /user:
+    post:
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      security: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Created user object
+        required: true
+
       responses:
         "200":
           content:
             application/json:
               schema:
-                additionalProperties:
-                  format: int32
-                  type: integer
-                type: object
+                $ref: '#/components/schemas/Token'
           description: successful operation
-      summary: Returns pet inventories by status
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failed to create user
+      summary: Create user
       tags:
-        - store
-      x-eov-operation-handler: controllers/StoreController
+        - user
+      x-codegen-request-body-name: body
+      x-eov-operation-handler: controllers/UserController
 components:
   schemas:
     Login:
       example:
-        username: Username
-        password: Password
+        username: username
+        password: password
       type: object
       properties:
         accessToken:
@@ -515,54 +453,17 @@ components:
           type: string
         errors:
           description: Errors object
-    Category:
+    PetInfo:
       example:
-        name: name
-        id: 6
-      properties:
-        id:
-          format: int64
-          type: integer
-        name:
-          type: string
-      type: object
-      xml:
-        name: Category
-    Pet:
-      example:
-        photoUrls:
-          - photoUrls
-          - photoUrls
         name: doggie
-        category:
-          name: name
-          id: 6
-        tags:
-          - name: name
-            id: 1
-          - name: name
-            id: 1
+        categoryId: 6
         status: available
       properties:
         category:
-          $ref: '#/components/schemas/Category'
+          type: integer
         name:
           example: doggie
           type: string
-        photoUrls:
-          items:
-            type: string
-            xml:
-              name: photoUrl
-          type: array
-          xml:
-            wrapped: true
-        tags:
-          items:
-            $ref: '#/components/schemas/Tag'
-          type: array
-          xml:
-            wrapped: true
         status:
           description: pet status in the store
           enum:
@@ -572,23 +473,30 @@ components:
           type: string
       required:
         - name
-        - photoUrls
       type: object
-      xml:
-        name: Pet
-    Tag:
+    Pet:
       example:
-        name: name
-        id: 1
+        id: 130
+        name: doggie
+        categoryId: 6
+        status: available
       properties:
         id:
-          format: int64
+          type: integer
+        category:
           type: integer
         name:
+          example: doggie
           type: string
-      type: object
-      xml:
-        name: Tag
+        status:
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+          type: string
+      required:
+        - name
     Order:
       example:
         petId: 6
@@ -622,6 +530,35 @@ components:
       type: object
       xml:
         name: Order
+    OrderInfo:
+      example:
+        petId: 2
+        quantity: 1
+        shipDate: 2000-01-23T04:56:07.000+00:00
+        complete: true
+        status: placed
+      properties:
+        petId:
+          format: int64
+          type: integer
+        quantity:
+          format: int32
+          type: integer
+        shipDate:
+          format: date-time
+          type: string
+        status:
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+          type: string
+        complete:
+          type: boolean
+      type: object
+      xml:
+        name: OrderInfo
     User:
       example:
         firstname: firstname
@@ -655,6 +592,18 @@ components:
       type: object
       xml:
         name: User
+    Category:
+      example:
+        name: "CategoryName"
+        description: "Dscription"
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      type: object
+      xml:
+        name: Category
   securitySchemes:
     bearerAuth:
       type: http

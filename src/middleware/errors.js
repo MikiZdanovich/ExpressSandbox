@@ -11,7 +11,7 @@ class ErrorFormatter {
       res.status(err.status || err.code || 500).json({
         code: err.status || err.code || 500,
         message: err.name || err.error.name || 'Bad request',
-        errors: err.errors || err.error.message || 'Something goes wrong'
+        errors: err.errors || err.error.message || 'Something went wrong'
       })
     })
   }

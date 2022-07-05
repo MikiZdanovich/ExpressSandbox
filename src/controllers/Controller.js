@@ -2,12 +2,11 @@ const logger = require('../utils/logger')
 
 class Controller {
   static sendResponse (response, payload) {
-    response.status(payload.code || 200)
+    response.status(payload.status_code || payload.code, 200)
 
     const responsePayload = payload.payload
 
     if (responsePayload instanceof Object || responsePayload instanceof Array) {
-      responsePayload.status = payload.code
       response.json(responsePayload)
     } else if (responsePayload) {
       response.send(responsePayload)
@@ -22,6 +21,9 @@ class Controller {
       message: err.name || err.error.message || err.error.name || 'Bad request',
       errors: err.errors || 'Something goes wrong'
     })
+  }
+  static successResponse(payload, code = 200) {
+    return { payload, code }
   }
 
   static async handleRequest (request, response, serviceOperation) {

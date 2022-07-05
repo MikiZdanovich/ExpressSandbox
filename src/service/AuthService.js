@@ -8,7 +8,7 @@ const jwtService = new JwtService(secrets)
 async function loginUser (request) {
   const user = await tokenUtils.verifyUser(request)
 
-  const { accessToken, refreshToken } = await jwtService.generate(user.id, user.email)
+  const { accessToken, refreshToken } = await jwtService.generate(user)
 
   return Service.successResponse({
     accessToken: accessToken,
