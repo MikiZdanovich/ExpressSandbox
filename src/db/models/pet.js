@@ -33,11 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       as: 'categories'
     });
-    Pet.belongsToMany(models.Tag, {
-      through: "Pet_Tag",
-      as: "tags",
-      foreignKey: "petId",
-    });
   };
   return Pet
 }
