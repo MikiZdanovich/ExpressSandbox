@@ -46,7 +46,7 @@
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
-    "nodemon": "^2.0.16",
+    "nodemon": "^2.0.20",
     "sequelize-cli": "^6.4.1",
     "standard": "^16.0.4"
   }
